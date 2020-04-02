@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNetCore.Mvc.Razor
+@using QnSTranslator.AspMvc.Extensions
+@using QnSTranslator.AspMvc.Modules.Session
+@model QnSTranslator.AspMvc.Models.Modules.Language.TranslationResult
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+
+@{
+    string page = string.Empty;
+    string all = "All";
+    string title = translate("Translation");
+    ViewData["Title"] = title;
+
+
+    if (sessionWrapper.HasValue(nameof(page)))
+    {
+        page = sessionWrapper.GetStringValue(nameof(page));
+    }
+
+    var appNameOptions = Model.AppNames.Select(i => new KeyValuePair<string, string>(i.Value, i.Value));
+}
+
+<h1>@title</h1>
+
+@if (sessionWrapper.IsAuthenticated)
+{
+    <div class="d-flex bg-transparent">
+        <div class="mr-auto p-sm-2">
+            <a asp-action="Create" asp-controller="Translation" class="btn btn-outline-secondary">@translate("Create New")</a>
+        </div>
+        <div class="p-sm-2">
+            <a asp-action="Export" asp-controller="Translation" class="btn btn-outline-secondary">@translate("Export")</a>
+        </div>
+        <div class="p-sm-2">
+            <a asp-action="Import" asp-controller="Translation" class="btn btn-outline-primary">@translate("Import")</a>
+        </div>
+    </div>
+}
+@{
+    char chrStart = 'A', chrEnd = 'Z';
+    <div class="d-flex justify-content-center">
+        @*<div class="mr-auto p-sm-0">
+            @Html.ToSelect("form-control", "appNames", "appName", appNameOptions, Model.AppNames[1].Value)
+        </div>*@
+        @for (char chrRun = chrStart; chrRun <= chrEnd; chrRun++)
+        {
+            string strRun = Char.ToString(chrRun);
+
+            if (chrRun.ToString().Equals(page))
+            {
+                <div class="p-sm-0"><a class="page-link" style="background-color: lightgray;" href="/Home/IndexBy?page=@strRun">@strRun</a></div>
+            }
+            else
+            {
+                <div class="p-sm-0"><a class="page-link" href="/Home/IndexBy?page=@strRun">@strRun</a></div>
+            }
+        }
+        @if (string.IsNullOrEmpty(page))
+        {
+            <div class="p-0" style="margin-left: 10px;"><a class="page-link" style="background-color: lightgray;" href="/Home/IndexAll">@all</a></div>
+        }
+        else
+        {
+            <div class="p-0" style="margin-left: 10px;"><a class="page-link" href="/Home/IndexAll">@all</a></div>
+        }
+    </div>
+}
+<p></p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.AppName))
+            </th>
+            <th>
+                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.KeyLanguage))
+            </th>
+            <th>
+                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.Key))
+            </th>
+            <th>
+                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.ValueLanguage))
+            </th>
+            <th>
+                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.Value))
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Models)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.KeyLanguage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Key)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValueLanguage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value)
+                </td>
+                <td>
+                    @if (sessionWrapper.IsAuthenticated)
+                    {
+                        @Html.ActionLink("Edit", "Edit", "Translation", new { id = item.Id })
+                        <span>|</span>
+                        @Html.ActionLink("Delete", "Delete", "Translation", new { id = item.Id });
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@
