@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+//@QnSCodeCopy
+//MdStart
 
 namespace QnSTranslator.AspMvc.Models.Modules.Export
 {
-    public class ImportModel : ModelObject
+    public class ImportModel<T> : ModelObject
+        where T : new()
     {
-        public class LogInfo
-        {
-            public bool IsError { get; set; }
-            public string Prefix { get; set; }
-            public string Text { get; set; }
-        }
-        public string FilePath { get; set; }
-        public IEnumerable<LogInfo> LogInfos { get; set; } = new LogInfo[0];
+        public ImportAction Action { get; set; }
+        public int Id { get; set; }
+        public T Model { get; set; }
     }
 }
+//MdEnd
