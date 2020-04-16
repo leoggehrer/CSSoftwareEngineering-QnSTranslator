@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Model = QnSTranslator.AspMvc.Models.Persistence.Language.Translation;
 using Contract = QnSTranslator.Contracts.Persistence.Language.ITranslation;
-using QnSTranslator.Contracts.Persistence.Language;
 using CommonBase.Extensions;
 
 namespace QnSTranslator.AspMvc.Controllers
@@ -93,10 +92,10 @@ namespace QnSTranslator.AspMvc.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private async Task<IEnumerable<ITranslation>> LoadDataAsync(string appName, string page)
+        private async Task<IEnumerable<Contract>> LoadDataAsync(string appName, string page)
         {
-            var result = new List<ITranslation>();
-            using var ctrl = Factory.Create<ITranslation>();
+            var result = new List<Contract>();
+            using var ctrl = Factory.Create<Contract>();
 
             var predicate = string.Empty;
 
