@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using CommonBase.Extensions;
 
-namespace QnSTranslator.Logic.Configuration
+namespace QnSTranslator.Logic.Modules.Configuration
 {
     public static class Configurator
     {

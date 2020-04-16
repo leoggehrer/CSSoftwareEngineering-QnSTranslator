@@ -15,18 +15,14 @@
 @*End:Header*@
 
 @{
-    string page = string.Empty;
-    string all = "All";
-    string title = translate("Translation");
-    ViewData["Title"] = title;
-
-
-    if (sessionWrapper.HasValue(nameof(page)))
-    {
-        page = sessionWrapper.GetStringValue(nameof(page));
-    }
-
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    Func<string, string> translateFor = pn => translate($"Translator.{pn}");
+    string title = translate("Translator");
+    string appName = sessionWrapper.GetStringValue(nameof(appName), "*");
+    string page = sessionWrapper.GetStringValue(nameof(page), "A");
     var appNameOptions = Model.AppNames.Select(i => new KeyValuePair<string, string>(i.Value, i.Value));
+
+    ViewData["Title"] = title;
 }
 
 <h1>@title</h1>
@@ -35,42 +31,46 @@
 {
     <div class="d-flex bg-transparent">
         <div class="mr-auto p-sm-2">
-            <a asp-action="Create" asp-controller="Translation" class="btn btn-outline-secondary">@translate("Create New")</a>
+            <a asp-action="Create" asp-controller="Translation" class="btn btn-outline-secondary">@translateFor("Create New")</a>
         </div>
         <div class="p-sm-2">
-            <a asp-action="Export" asp-controller="Translation" class="btn btn-outline-secondary">@translate("Export")</a>
+            <a asp-action="Export" asp-controller="Translation" class="btn btn-outline-secondary">@translateFor("Export")</a>
         </div>
         <div class="p-sm-2">
-            <a asp-action="Import" asp-controller="Translation" class="btn btn-outline-primary">@translate("Import")</a>
+            <a asp-action="Import" asp-controller="Translation" class="btn btn-outline-primary">@translateFor("Import")</a>
         </div>
     </div>
 }
+<p></p>
 @{
     char chrStart = 'A', chrEnd = 'Z';
     <div class="d-flex justify-content-center">
-        @*<div class="mr-auto p-sm-0">
-            @Html.ToSelect("form-control", "appNames", "appName", appNameOptions, Model.AppNames[1].Value)
-        </div>*@
         @for (char chrRun = chrStart; chrRun <= chrEnd; chrRun++)
         {
             string strRun = Char.ToString(chrRun);
+            string hRef = $"/Home/IndexBy?appName={appName}&page={chrRun}";
 
             if (chrRun.ToString().Equals(page))
             {
-                <div class="p-sm-0"><a class="page-link" style="background-color: lightgray;" href="/Home/IndexBy?page=@strRun">@strRun</a></div>
+                <div class="p-sm-0"><a class="page-link" style="background-color: lightgray;" href="@hRef">@strRun</a></div>
             }
             else
             {
-                <div class="p-sm-0"><a class="page-link" href="/Home/IndexBy?page=@strRun">@strRun</a></div>
+                <div class="p-sm-0"><a class="page-link" href="@hRef">@strRun</a></div>
             }
         }
-        @if (string.IsNullOrEmpty(page))
+
+        @if (page.Equals("*"))
         {
-            <div class="p-0" style="margin-left: 10px;"><a class="page-link" style="background-color: lightgray;" href="/Home/IndexAll">@all</a></div>
+            string hRef = $"/Home/IndexBy?appName={appName}&page=*";
+
+            <div class="p-0" style="margin-left: 10px;"><a class="page-link" style="background-color: lightgray;" href="@hRef">@translateFor("All")</a></div>
         }
         else
         {
-            <div class="p-0" style="margin-left: 10px;"><a class="page-link" href="/Home/IndexAll">@all</a></div>
+            string hRef = $"/Home/IndexBy?appName={appName}&page=*";
+
+            <div class="p-0" style="margin-left: 10px;"><a class="page-link" href="@hRef">@translateFor("All")</a></div>
         }
     </div>
 }
@@ -79,19 +79,31 @@
     <thead>
         <tr>
             <th>
-                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.AppName))
+                <div class="dropdown">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">
+                        @appName
+                    </button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in appNameOptions)
+                        {
+                            string hRef = $"/Home/IndexBy?appName={item.Value}&page={page}";
+
+                            <a class="dropdown-item" href="@hRef">@item.Value</a>
+                        }
+                    </div>
+                </div>
             </th>
             <th>
-                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.KeyLanguage))
+                @translateFor(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.KeyLanguage))
             </th>
             <th>
-                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.Key))
+                @translateFor(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.Key))
             </th>
             <th>
-                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.ValueLanguage))
+                @translateFor(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.ValueLanguage))
             </th>
             <th>
-                @translate(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.Value))
+                @translateFor(nameof(QnSTranslator.AspMvc.Models.Persistence.Language.Translation.Value))
             </th>
             <th></th>
         </tr>
@@ -118,9 +130,9 @@
                 <td>
                     @if (sessionWrapper.IsAuthenticated)
                     {
-                        @Html.ActionLink("Edit", "Edit", "Translation", new { id = item.Id })
+                        @Html.ActionLink(translateFor("Edit"), "Edit", "Translation", new { id = item.Id })
                         <span>|</span>
-                        @Html.ActionLink("Delete", "Delete", "Translation", new { id = item.Id });
+                        @Html.ActionLink(translateFor("Delete"), "Delete", "Translation", new { id = item.Id });
                     }
                 </td>
             </tr>

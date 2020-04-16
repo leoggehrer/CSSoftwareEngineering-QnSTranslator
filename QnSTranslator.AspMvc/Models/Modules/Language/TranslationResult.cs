@@ -6,7 +6,7 @@ namespace QnSTranslator.AspMvc.Models.Modules.Language
     {
         private IEnumerable<Persistence.Language.Translation> translations;
 
-        public GroupResult[] AppNames { get; set; }
+        public IEnumerable<GroupResult> AppNames { get; set; }
         public IEnumerable<Persistence.Language.Translation> Models
         {
             get => translations ?? (translations = new Persistence.Language.Translation[0]); 

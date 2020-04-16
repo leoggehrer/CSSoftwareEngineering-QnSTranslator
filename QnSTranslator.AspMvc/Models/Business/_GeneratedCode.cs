@@ -83,7 +83,7 @@ namespace QnSTranslator.AspMvc.Models.Business.Account
 }
 namespace QnSTranslator.AspMvc.Models.Business.Account
 {
-	partial class AppAccess : Models.IdentityModel
+	partial class AppAccess : IdentityModel
 	{
 	}
 }

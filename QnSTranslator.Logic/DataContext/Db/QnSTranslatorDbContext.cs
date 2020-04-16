@@ -14,10 +14,7 @@ namespace QnSTranslator.Logic.DataContext.Db
         static QnSTranslatorDbContext()
         {
             ClassConstructing();
-            if (Configuration.Configurator.Contains(CommonBase.StaticLiterals.ConnectionStringKey))
-            {
-                ConnectionString = Configuration.Configurator.Get(CommonBase.StaticLiterals.ConnectionStringKey);
-            }
+            ConnectionString = Modules.Configuration.Settings.Get(CommonBase.StaticLiterals.ConnectionString, DefaultConnectionString);
             ClassConstructed();
         }
         static partial void ClassConstructing();
@@ -33,11 +30,11 @@ namespace QnSTranslator.Logic.DataContext.Db
                     && level == LogLevel.Information)
                 .AddDebug();
         });
-        private static string ConnectionString { get; set; } = "Data Source=(localdb)\\MSSQLLocalDb;Database=QnSTranslatorDb;Integrated Security=True;";
-//        private static string ConnectionString { get; set; } = "Data Source=127.0.0.1;Database=QnSTranslatorDb;User Id=sa;Password=Passme123!";
+        private static string DefaultConnectionString => "Data Source=(localdb)\\MSSQLLocalDb;Database=QnSTranslatorDb;Integrated Security=True;";
 #else
-        private static string ConnectionString { get; set; } = "Data Source=dbserver;Database=QnSTranslatorDb;User Id=sa;Password=Passme123!";
+        private static string DefaultConnectionString => "Data Source=dbserver;Database=QnSTranslatorDb;User Id=sa;Password=Passme123!";
 #endif
+        private static string ConnectionString { get; set; }
 
         public QnSTranslatorDbContext()
         {

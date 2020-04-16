@@ -1,19 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+//@QnSCodeCopy
+//MdStart
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace QnSTranslator.WebApi
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -25,12 +20,21 @@ namespace QnSTranslator.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            BeginConfigureServices(services);
             services.AddControllers();
+            EndConfigureServices(services);
         }
+        partial void BeginConfigureServices(IServiceCollection services);
+        partial void EndConfigureServices(IServiceCollection services);
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            BeginConfigure(app, env);
+
+            // Transfer the application settings to the logic.
+            Logic.Modules.Configuration.Settings.SetConfiguration(Configuration);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -46,6 +50,10 @@ namespace QnSTranslator.WebApi
             {
                 endpoints.MapControllers();
             });
+            EndConfigure(app, env);
         }
+        partial void BeginConfigure(IApplicationBuilder app, IWebHostEnvironment env);
+        partial void EndConfigure(IApplicationBuilder app, IWebHostEnvironment env);
     }
 }
+//MdEnd

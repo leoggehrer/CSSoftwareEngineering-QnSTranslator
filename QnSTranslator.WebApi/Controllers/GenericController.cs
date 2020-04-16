@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonBase.Extensions;
+using Microsoft.EntityFrameworkCore;
 using QnSTranslator.Transfer.InvokeTypes;
 
 namespace QnSTranslator.WebApi.Controllers
@@ -16,8 +17,8 @@ namespace QnSTranslator.WebApi.Controllers
         protected Contracts.Client.IControllerAccess<I> CreateController()
         {
             var result = Logic.Factory.Create<I>();
-            string authHeader = HttpContext.Request.Headers["Authorization"];
-            string sessionToken = GetSessionToken(authHeader);
+            var authHeader = HttpContext.Request.Headers["Authorization"];
+            var sessionToken = GetSessionToken(authHeader);
 
             if (sessionToken.HasContent())
             {

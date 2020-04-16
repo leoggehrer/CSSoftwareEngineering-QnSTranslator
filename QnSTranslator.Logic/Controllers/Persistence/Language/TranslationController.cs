@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using QnSTranslator.Contracts.Modules.Language;
 using QnSTranslator.Contracts.Persistence.Language;
 using QnSTranslator.Logic.Entities.Persistence.Language;
 
@@ -39,8 +38,8 @@ namespace QnSTranslator.Logic.Controllers.Persistence.Language
         {
             var result = await base.CreateAsync().ConfigureAwait(false);
 
-            result.KeyLanguage = LanguageCode.En;
-            result.ValueLanguage = LanguageCode.De;
+            result.KeyLanguage = Contracts.Modules.Language.LanguageCode.En;
+            result.ValueLanguage = Contracts.Modules.Language.LanguageCode.De;
             return result;
         }
 

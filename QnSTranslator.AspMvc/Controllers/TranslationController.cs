@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Model = QnSTranslator.AspMvc.Models.Persistence.Language.Translation;
 using Contract = QnSTranslator.Contracts.Persistence.Language.ITranslation;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using System.IO;
+using QnSTranslator.Contracts.Persistence.Language;
+using CommonBase.Extensions;
 
 namespace QnSTranslator.AspMvc.Controllers
 {
@@ -95,15 +93,43 @@ namespace QnSTranslator.AspMvc.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        private async Task<IEnumerable<ITranslation>> LoadDataAsync(string appName, string page)
+        {
+            var result = new List<ITranslation>();
+            using var ctrl = Factory.Create<ITranslation>();
+
+            var predicate = string.Empty;
+
+            if (appName.Equals("*") == false)
+            {
+                predicate = $"(AppName.Equals(\"{appName}\"))";
+            }
+            if (page.Equals("*") == false)
+            {
+                predicate = predicate.HasContent() ? $"{predicate} && " : predicate;
+                predicate = $"{predicate}(Key.ToUpper().StartsWith(\"{page}\"))";
+            }
+            if (predicate.HasContent())
+            {
+                result.AddRange(await ctrl.QueryAllAsync($"{predicate}").ConfigureAwait(false));
+            }
+            else
+            {
+                result.AddRange(await ctrl.GetAllAsync().ConfigureAwait(false));
+            }
+            return result;
+        }
+
         #region Export and Import
         protected override string[] CsvHeader => new string[] { "Id", "AppName", "KeyLanguage", "Key", "ValueLanguage", "Value" };    
 
         [ActionName("Export")]
         public async Task<FileResult> ExportAsync()
         {
-            using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
+            string appName = SessionWrapper.GetStringValue(nameof(appName));
+            string page = SessionWrapper.GetStringValue(nameof(page));
             var fileName = $"{typeof(Model).Name}.csv";
-            var entities = await ctrl.GetAllAsync().ConfigureAwait(false);
+            var entities = await LoadDataAsync(appName, page).ConfigureAwait(false);
 
             return ExportDefault(CsvHeader, entities, fileName);
         }

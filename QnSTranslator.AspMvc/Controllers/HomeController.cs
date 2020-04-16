@@ -1,6 +1,7 @@
 //@QnSCodeCopy
 //MdStart
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,54 +46,53 @@ namespace QnSTranslator.AspMvc.Controllers
             var result = new TranslationResult();
             using var ctrl = Factory.Create<Contracts.Persistence.Language.ITranslation>();
 
-            var appQuery = string.IsNullOrEmpty(appName) == false ? $"AppName.ToUpper().Equals(\"{appName.ToLower()}\") && " : string.Empty;
-            var entities = await ctrl.QueryAllAsync($"{appQuery}Key.ToUpper().StartsWith(\"{page.ToLower()}\")").ConfigureAwait(false);
-            
-            result.AppNames = await ctrl.InvokeFunctionAsync<GroupResult[]>("InvokeQueryAppNames").ConfigureAwait(false);
-            result.Models = entities.Select(e => ConvertTo(e)).OrderBy(e => e.KeyLanguage).ThenBy(e => e.Key);
+            var predicate = string.Empty;
+            var appNames = new List<GroupResult>() { new GroupResult { Value = "*" } };
+
+            if (appName.Equals("*") == false)
+            {
+                predicate = $"(AppName.Equals(\"{appName}\"))";
+            }
+            if (page.Equals("*") == false)
+            {
+                predicate = predicate.HasContent() ? $"{predicate} && " : predicate;
+                predicate = $"{predicate}(Key.ToUpper().StartsWith(\"{page}\"))";
+            }
+            var entities = default(IEnumerable<Contracts.Persistence.Language.ITranslation>);
+                
+            if (predicate.HasContent())
+            {
+                entities = await ctrl.QueryAllAsync($"{predicate}").ConfigureAwait(false);
+            }
+            else
+            {
+                entities = await ctrl.GetAllAsync().ConfigureAwait(false);
+            }
+            appNames.AddRange(await ctrl.InvokeFunctionAsync<GroupResult[]>("InvokeQueryAppNames").ConfigureAwait(false));
+
+            result.AppNames = appNames;
+            result.Models = entities.Select(e => ConvertTo(e)).OrderBy(e => e.AppName).ThenBy(e => e.KeyLanguage).ThenBy(e => e.Key);
             return result;
         }
 
         [ActionName("Index")]
-        public async Task<IActionResult> IndexAsync()
+        public IActionResult Index()
         {
-            string page = "A";
-            string appName = string.Empty;
+            string page = SessionWrapper.GetStringValue(nameof(page), "A");
+            string appName = SessionWrapper.GetStringValue(nameof(appName), "*");
 
-            if (SessionWrapper.HasValue(nameof(page)))
-            {
-                page = SessionWrapper.GetStringValue(nameof(page));
-            }
-            else
-            {
-                SessionWrapper.SetStringValue(nameof(page), page);
-            }
-            var model = await LoadDataAsync(appName, page).ConfigureAwait(false);
-
-            return View("TranslationIndex", model);
+            return RedirectToAction("IndexBy", new { appName, page });
         }
         [ActionName("IndexBy")]
-        public async Task<IActionResult> IndexByAsync(string page)
+        public async Task<IActionResult> IndexByAsync(string appName, string page)
         {
-            string appName = string.Empty;
-            SessionWrapper.SetStringValue(nameof(page), page);
-
             var model = await LoadDataAsync(appName, page).ConfigureAwait(false);
+
+            SessionWrapper.SetStringValue(nameof(appName), appName);
+            SessionWrapper.SetStringValue(nameof(page), page);
 
             return View("TranslationIndex", model);
         }
-        [ActionName("IndexAll")]
-        public async Task<IActionResult> IndexAllAsync()
-        {
-            string appName = string.Empty;
-            string page = string.Empty;
-            SessionWrapper.SetStringValue(nameof(page), page);
-
-            var model = await LoadDataAsync(appName, page).ConfigureAwait(false);
-
-            return View("TranslationIndex", model);
-        }
-
         public IActionResult Privacy()
         {
             return View();

@@ -6,10 +6,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
-using Model = QnSTranslator.AspMvc.Models.Business.Account.AppAccess;
-using Contract = QnSTranslator.Contracts.Business.Account.IAppAccess;
 using CommonBase.Extensions;
 using QnSTranslator.AspMvc.Models.Persistence.Account;
+using Model = QnSTranslator.AspMvc.Models.Business.Account.AppAccess;
+using Contract = QnSTranslator.Contracts.Business.Account.IAppAccess;
 
 namespace QnSTranslator.AspMvc.Controllers
 {

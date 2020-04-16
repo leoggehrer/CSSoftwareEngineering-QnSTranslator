@@ -5,7 +5,7 @@ namespace CommonBase
 {
     public static class StaticLiterals
     {
-        public static string ConnectionStringKey => nameof(ConnectionStringKey);
+        public static string ConnectionString => "ConnectionStrings:DefaultConnection";
     }
 }
 //MdEnd

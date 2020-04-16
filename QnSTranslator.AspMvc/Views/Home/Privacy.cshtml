@@ -1,7 +1,38 @@
-@*@QnSBaseCode*@
+@*@QnSCodeCopy*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using QnSTranslator.AspMvc.Modules.Session
+@*Begin:Header*@
 @{
-    ViewData["Title"] = "Privacy Policy";
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string, string> translate2 = sessionWrapper.Translate;
 }
-<h1>@ViewData["Title"]</h1>
+@*End:Header*@
+@{
+    var title = translate2("Privacy.Page", "Privacy Policy Page");
 
-<p>Use this page to detail your site's privacy policy.</p>
+    ViewData["Title"] = title;
+}
+
+<div class="text-center">
+    <h1 class="display-4">@translate2("Privacy.Welcome", "Privacy Policy")</h1>
+    <p></p>
+    <h4>@translate2("Home.Welcome.Text", "to the QnSTranslator")</h4>
+    <p></p>
+    <p>@translate2("Home.Text", string.Empty)</p>
+</div>
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

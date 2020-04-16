@@ -152,7 +152,7 @@ namespace QnSTranslator.AspMvc.Models.Persistence.Language
 }
 namespace QnSTranslator.AspMvc.Models.Persistence.Language
 {
-	partial class Translation : Models.IdentityModel
+	partial class Translation : IdentityModel
 	{
 	}
 }
@@ -310,7 +310,7 @@ namespace QnSTranslator.AspMvc.Models.Persistence.Account
 }
 namespace QnSTranslator.AspMvc.Models.Persistence.Account
 {
-	partial class ActionLog : Models.IdentityModel
+	partial class ActionLog : IdentityModel
 	{
 	}
 }
@@ -514,7 +514,7 @@ namespace QnSTranslator.AspMvc.Models.Persistence.Account
 }
 namespace QnSTranslator.AspMvc.Models.Persistence.Account
 {
-	partial class Identity : Models.IdentityModel
+	partial class Identity : IdentityModel
 	{
 	}
 }
@@ -603,7 +603,7 @@ namespace QnSTranslator.AspMvc.Models.Persistence.Account
 }
 namespace QnSTranslator.AspMvc.Models.Persistence.Account
 {
-	partial class IdentityXRole : Models.IdentityModel
+	partial class IdentityXRole : IdentityModel
 	{
 	}
 }
@@ -876,7 +876,7 @@ namespace QnSTranslator.AspMvc.Models.Persistence.Account
 }
 namespace QnSTranslator.AspMvc.Models.Persistence.Account
 {
-	partial class LoginSession : Models.IdentityModel
+	partial class LoginSession : IdentityModel
 	{
 	}
 }
@@ -965,7 +965,7 @@ namespace QnSTranslator.AspMvc.Models.Persistence.Account
 }
 namespace QnSTranslator.AspMvc.Models.Persistence.Account
 {
-	partial class Role : Models.IdentityModel
+	partial class Role : IdentityModel
 	{
 	}
 }

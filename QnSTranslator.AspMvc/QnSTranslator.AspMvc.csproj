@@ -19,6 +19,12 @@
     <ProjectReference Include="..\QnSTranslator.Adapters\QnSTranslator.Adapters.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Home\" />
+    <Folder Include="Views\Identity\" />
+    <Folder Include="Views\Role\" />
+  </ItemGroup>
+
 
 
 </Project>

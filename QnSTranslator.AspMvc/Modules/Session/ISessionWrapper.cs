@@ -28,6 +28,7 @@ namespace QnSTranslator.AspMvc.Modules.Session
         #region String-Access
         void SetStringValue(string key, string value);
         string GetStringValue(string key);
+        string GetStringValue(string key, string defaultValue);
         #endregion String-Access
 
         #region Properties
@@ -38,7 +39,7 @@ namespace QnSTranslator.AspMvc.Modules.Session
 
         #region Authentication
         Models.Persistence.Account.LoginSession LoginSession { get; set; }
-        string SessionToken => LoginSession != null ? LoginSession.SessionToken : null;
+        string SessionToken => LoginSession?.SessionToken;
         #endregion Authentication
     }
 }

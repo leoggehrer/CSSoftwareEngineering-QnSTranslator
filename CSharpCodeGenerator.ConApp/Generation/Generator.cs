@@ -11,6 +11,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class Generator
     {
+        public enum InterfaceType
+        {
+            Unknown,
+            Business,
+            Module,
+            Persistence,
+        }
+
         public SolutionProperties SolutionProperties { get; private set; }
         public Generator(SolutionProperties solutionProperties)
         {
@@ -42,47 +50,124 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
 
-        /// <summary>
-        /// Diese Methode erstellt den Programmcode der Beziehungen zwischen den Entitaeten aus den Schnittstellen-Typen.
-        /// </summary>
-        /// <param name="type">Der Schnittstellen-Typ.</param>
-        /// <param name="types">Die Schnittstellen-Typen.</param>
-        /// <param name="mapPropertyName">Ein Lambda-Ausdruck zum konvertieren des Eigenschaftsnamen.</param>
-        /// <returns>Die referenzierten Typen.</returns>
-        internal static IEnumerable<Type> CreateTypeToTypeFromContracts(Type type, IEnumerable<Type> types, Func<string, string> mapPropertyName)
+        #region Helpers
+        #region Assemply-Helpers
+        internal static IEnumerable<Type> GetInterfaceTypes(Assembly assembly)
+        {
+            assembly.CheckArgument(nameof(assembly));
+
+            return assembly.GetTypes().Where(t => t.IsInterface && t.IsPublic);
+        }
+        internal static IEnumerable<Type> GetModulesTypes(Assembly assembly)
+        {
+            return GetInterfaceTypes(assembly)
+                        .Where(t => t.IsInterface
+                                 && t.FullName.Contains(".Modules."));
+        }
+        internal static IEnumerable<Type> GetPersistenceTypes(Assembly assembly)
+        {
+            return GetInterfaceTypes(assembly)
+                        .Where(t => t.IsInterface
+                                 && t.FullName.Contains(".Persistence."));
+        }
+        internal static IEnumerable<Type> GetBusinessTypes(Assembly assembly)
+        {
+            return GetInterfaceTypes(assembly)
+                        .Where(t => t.IsInterface
+                                 && t.FullName.Contains(".Business."));
+        }
+        #endregion Assembly-Helpers
+
+        #region Interface helpers
+        internal static InterfaceType GetInterfaceType(Type type)
         {
             type.CheckArgument(nameof(type));
-            types.CheckArgument(nameof(types));
 
-            var result = new List<Type>();
-            var typeName = Generator.CreateEntityNameFromInterface(type);
+            var result = InterfaceType.Unknown;
 
-            foreach (var other in types)
+            if (type.Namespace.Contains(ContractsProject.BusinessSubName))
+                result = InterfaceType.Business;
+            else if (type.Namespace.Contains(ContractsProject.ModulesSubName))
+                result = InterfaceType.Module;
+            else if (type.Namespace.Contains(ContractsProject.PersistenceSubName))
+                result = InterfaceType.Persistence;
+
+            return result;
+        }
+        internal static bool HasIdentifiableBase(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = false;
+
+            if (type.IsInterface)
             {
-                var otherName = Generator.CreateEntityNameFromInterface(other);
+                result = type.GetInterfaces().Any(i => i.Name.Equals("IIdentifiable"));
+            }
+            return result;
+        }
+        internal static Type GetBaseInterface(Type type)
+        {
+            type.CheckArgument(nameof(type));
 
-                foreach (var pi in other.GetProperties())
+            var result = default(Type);
+
+            if (type.IsInterface)
+            {
+                var interfaceType = GetInterfaceType(type);
+
+                if (interfaceType == InterfaceType.Business)
                 {
-                    if (pi.Name.Equals($"{typeName}Id"))
-                    {
-                        result.Add(other);
-                    }
+                    result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.BusinessSubName));
+                }
+                else if (interfaceType == InterfaceType.Module)
+                {
+                    result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.ModulesSubName));
+                }
+                else if (interfaceType == InterfaceType.Persistence)
+                {
+                    result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.PersistenceSubName));
                 }
             }
             return result;
         }
-
-        #region Helpers
-        /// <summary>
-        /// Diese Methode konvertiert den Eigenschaftstyp in eine Zeichenfolge.
-        /// </summary>
-        /// <param name="propertyInfo">Das Eigenschaftsinfo-Objekt.</param>
-        /// <returns>Der Eigenschaftstyp als Zeichenfolge.</returns>
-        internal static string GetPropertyType(PropertyInfo propertyInfo)
+        internal static IEnumerable<Type> GetBaseInterfaces(Type type)
         {
-            return propertyInfo.PropertyType.GetCodeDefinition();
-        }
+            type.CheckArgument(nameof(type));
 
+            var result = new List<Type>();
+
+            void GetBaseInterfacesRec(Type type, List<Type> baseTypes)
+            {
+                var baseItfc = GetBaseInterface(type);
+
+                if (baseItfc != null)
+                    baseTypes.Add(baseItfc);
+
+                foreach (var item in type.GetInterfaces().Where(i => baseItfc != null && i.FullName.Equals(baseItfc.FullName) == false))
+                {
+                    GetBaseInterfacesRec(item, baseTypes);
+                }
+            }
+            GetBaseInterfacesRec(type, result);
+            return result;
+        }
+        #endregion Interface helpers
+
+
+
+        /// <summary>
+        /// Diese Methode ueberprueft, ob der Typ ein Schnittstellen-Typ ist. Wenn nicht,
+        /// dann wirft die Methode eine Ausnahme.
+        /// </summary>
+        /// <param name="type">Der zu ueberpruefende Typ.</param>
+        internal static void CheckInterfaceType(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            if (type.GetTypeInfo().IsInterface == false)
+                throw new ArgumentException($"The parameter '{nameof(type)}' must be an interface.");
+        }
         /// <summary>
         /// Diese Methode ermittelt den Solutionname aus seinem Schnittstellen Typ.
         /// </summary>
@@ -230,6 +315,16 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
 
+        #region Property-Helpers
+        /// <summary>
+        /// Diese Methode konvertiert den Eigenschaftstyp in eine Zeichenfolge.
+        /// </summary>
+        /// <param name="propertyInfo">Das Eigenschaftsinfo-Objekt.</param>
+        /// <returns>Der Eigenschaftstyp als Zeichenfolge.</returns>
+        internal static string GetPropertyType(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.PropertyType.GetCodeDefinition();
+        }
         /// <summary>
         /// Diese Methode ermittelt den Feldnamen aus seinem Schnittstellen Typ.
         /// </summary>
@@ -255,7 +350,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             return $"{prefix}{char.ToLower(propertyInfo.Name.First())}{propertyInfo.Name.Substring(1)}";
         }
-
         /// <summary>
         /// Diese Methode ermittelt den Feldnamen aus seinem Schnittstellen Typ.
         /// </summary>
@@ -268,24 +362,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             return $"{type.Name.Substring(1)}{postFix}";
         }
-        /// <summary>
-        /// Diese Methode ueberprueft, ob der Typ ein Schnittstellen-Typ ist. Wenn nicht,
-        /// dann wirft die Methode eine Ausnahme.
-        /// </summary>
-        /// <param name="type">Der zu ueberpruefende Typ.</param>
-        internal static void CheckInterfaceType(Type type)
+        internal static IEnumerable<PropertyInfo> GetPublicProperties(Type type)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
-            if (type.GetTypeInfo().IsInterface == false)
-                throw new ArgumentException($"The parameter '{nameof(type)}' must be an interface.");
-        }
-
-        internal static PropertyInfo[] GetPublicProperties(Type type)
-        {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
+            type.CheckArgument(nameof(type));
 
             if (type.GetTypeInfo().IsInterface)
             {
@@ -327,6 +406,102 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 | BindingFlags.Public
                 | BindingFlags.Instance);
         }
+        /// <summary>
+        /// Liefert die Eigenschaften welche direkt in der Schnittstelle definiert sind.
+        /// </summary>
+        /// <param name="type">Die zu lesende Schnittstelle.</param>
+        /// <returns>Alle Eigenschaften die in der Schnittstelle definiert sind.</returns>
+        public static IEnumerable<PropertyInfo> GetInterfaceProperties(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            if (type.GetTypeInfo().IsInterface == false)
+                throw new ArgumentException($"The parameter '{nameof(type)}' must be an interface.");
+
+            var result = new List<PropertyInfo>();
+
+            foreach (var item in type.GetProperties())
+            {
+                result.Add(item);
+            }
+            return result;
+        }
+        /// <summary>
+        /// Liefert alle Eigenschaften die in der Schnittstelle direkt definiert sind und alle
+        /// Eigenschaften die den Basisschnittstellen definiert sind. Es koennen Schnittstellen 
+        /// ausgenommen werden.
+        /// </summary>
+        /// <param name="type">Die zu lesende Schnittstelle</param>
+        /// <param name="ignoreInterfaces">Die Schnittstellen die von Lesen ausgenommen werden.</param>
+        /// <returns>Alle Eigenschaften die in der Schnittstelle definiert sind und alle Eigenschaften die in den Basisschnittstellen definiert sind.</returns>
+        public static IEnumerable<PropertyInfo> GetAllInterfaceProperties(Type type, params Type[] ignoreInterfaces)
+        {
+            type.CheckArgument(nameof(type));
+
+            if (type.GetTypeInfo().IsInterface == false)
+                throw new ArgumentException($"The parameter '{nameof(type)}' must be an interface.");
+
+            var result = new List<PropertyInfo>();
+
+            if (ignoreInterfaces.Contains(type) == false)
+            {
+                result.AddRange(GetInterfaceProperties(type));
+                var interfaces = FlattenInterfaces(type.GetInterfaces());
+
+                foreach (var item in interfaces)
+                {
+                    if (ignoreInterfaces.Contains(item) == false)
+                    {
+                        foreach (var pi in GetInterfaceProperties(item))
+                        {
+                            if (result.Find(p => p.Name.Equals(pi.Name)) == null)
+                            {
+                                result.Add(pi);
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        /// <summary>
+        /// Diese Methode loest die Vererbung auf und liefert alle Schnittstellen in einer Liste.
+        /// </summary>
+        /// <param name="types">Die aufzuloesenden Schnittstellen.</param>
+        /// <returns>Eine Liste der Schnittstellen.</returns>
+        public static IEnumerable<Type> FlattenInterfaces(IEnumerable<Type> types)
+        {
+            types.CheckArgument(nameof(types));
+
+            var result = new List<Type>();
+
+            foreach (var type in types)
+            {
+                if (type.GetTypeInfo().IsInterface
+                    && result.Contains(type) == false)
+                {
+                    result.Add(type);
+                    FlattenInterfacesRec(type, result);
+                }
+            }
+            return result;
+        }
+        private static void FlattenInterfacesRec(Type type, List<Type> types)
+        {
+            type.CheckArgument(nameof(type));
+            types.CheckArgument(nameof(types));
+
+            foreach (var itf in type.GetInterfaces())
+            {
+                if (types.Contains(itf) == false)
+                {
+                    types.Add(itf);
+                    FlattenInterfacesRec(itf, types);
+                }
+            }
+        }
+        #endregion Property-Helpers
+
         #endregion Helpers
     }
 }

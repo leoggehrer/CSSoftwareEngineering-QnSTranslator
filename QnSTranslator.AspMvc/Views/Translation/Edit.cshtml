@@ -50,7 +50,6 @@
             </div>
             <div class="form-group">
                 <label asp-for="KeyLanguage" class="control-label"></label>
-                @*@Html.ToSelect("form-control", string.Empty, "KeyLanguage", languageOptions, Model.KeyLanguage)*@
                 <select asp-for="KeyLanguage" asp-items="Html.GetEnumSelectList<QnSTranslator.Contracts.Modules.Language.LanguageCode>()" class="form-control"></select> 
             </div>
             <div class="form-group">
@@ -60,7 +59,6 @@
             </div>
             <div class="form-group">
                 <label asp-for="ValueLanguage" class="control-label"></label>
-                @*@Html.ToSelect("form-control", string.Empty, "ValueLanguage", languageOptions, Model.ValueLanguage)*@
                 <select asp-for="ValueLanguage" asp-items="Html.GetEnumSelectList<QnSTranslator.Contracts.Modules.Language.LanguageCode>()" class="form-control"></select>
             </div>
             <div class="form-group">

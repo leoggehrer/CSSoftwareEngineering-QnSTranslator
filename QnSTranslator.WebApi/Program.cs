@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+//@QnSCodeCopy
+//MdStart
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace QnSTranslator.WebApi
 {
@@ -24,3 +20,4 @@ namespace QnSTranslator.WebApi
                 });
     }
 }
+//MdEnd

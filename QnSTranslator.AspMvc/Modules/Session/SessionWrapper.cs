@@ -19,11 +19,11 @@ namespace QnSTranslator.AspMvc.Modules.Session
         #region Translator
         public string Translate(string text)
         {
-            return text;
+            return Language.Translator.Translate(text);
         }
         public string Translate(string text, string defaultValue)
         {
-            return defaultValue;
+            return Language.Translator.Translate(text, defaultValue);
         }
         #endregion Translator
 
@@ -68,6 +68,12 @@ namespace QnSTranslator.AspMvc.Modules.Session
         public string GetStringValue(string key)
         {
             return Session.Get<string>(key);
+        }
+        public string GetStringValue(string key, string defaultValue)
+        {
+            var result = Session.Get<string>(key);
+
+            return string.IsNullOrEmpty(result) ? defaultValue : result;
         }
         #endregion String-Access
 

@@ -130,8 +130,8 @@ namespace QnSTranslator.Logic.Controllers
         }
         internal async virtual Task<IQueryable<I>> ExecuteGetAllAsync()
         {
-            int idx = 0, qryCount = 0;
-            List<I> result = new List<I>();
+            int idx = 0, qryCount;
+            var result = new List<I>();
 
             do
             {
@@ -159,6 +159,16 @@ namespace QnSTranslator.Logic.Controllers
                      .Skip(pageIndex * pageSize)
                      .Take(pageSize));
         }
+        internal virtual Task<IQueryable<I>> ExecuteQueryPageListAsync(Expression<Func<E, bool>> predicate, int pageIndex, int pageSize)
+        {
+            if (pageSize < 1 && pageSize > MaxPageSize)
+                throw new LogicException(ErrorType.InvalidPageSize);
+
+            return Task.FromResult<IQueryable<I>>(Set().AsQueryable()
+                     .Where(predicate)
+                     .Skip(pageIndex * pageSize)
+                     .Take(pageSize));
+        }
 
         public virtual Task<IQueryable<I>> QueryAllAsync(string predicate)
         {
@@ -168,8 +178,22 @@ namespace QnSTranslator.Logic.Controllers
         }
         internal virtual async Task<IQueryable<I>> ExecuteQueryAllAsync(string predicate)
         {
-            int idx = 0, qryCount = 0;
-            List<I> result = new List<I>();
+            int idx = 0, qryCount;
+            var result = new List<I>();
+
+            do
+            {
+                var qry = await ExecuteQueryPageListAsync(predicate, idx++, MaxPageSize).ConfigureAwait(false);
+
+                qryCount = qry.Count();
+                result.AddRange(qry);
+            } while (qryCount == MaxPageSize);
+            return result.AsQueryable();
+        }
+        internal virtual async Task<IQueryable<I>> ExecuteQueryAllAsync(Expression<Func<E, bool>> predicate)
+        {
+            int idx = 0, qryCount;
+            var result = new List<I>();
 
             do
             {
