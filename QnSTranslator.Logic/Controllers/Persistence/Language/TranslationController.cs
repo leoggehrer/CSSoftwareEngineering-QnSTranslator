@@ -54,7 +54,7 @@ namespace QnSTranslator.Logic.Controllers.Persistence.Language
 
         public Task<object> InvokeQueryAppNames()
         {
-            return Task.FromResult<object>(Set().GroupBy(p => p.AppName).Select(i => new { Value = i.Key }).ToList()); 
+            return Task.FromResult<object>(QueryableSet().GroupBy(p => p.AppName).Select(i => new { Value = i.Key }).ToList()); 
         }
     }
 }

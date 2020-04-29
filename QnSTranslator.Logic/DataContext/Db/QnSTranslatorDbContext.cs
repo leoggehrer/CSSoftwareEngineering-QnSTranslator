@@ -1,11 +1,10 @@
-//@CustomizeCode
+//@QnSCodeCopy
 //MdStart
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
 using QnSTranslator.Logic.Entities.Persistence.Account;
-using QnSTranslator.Logic.Entities.Persistence.Language;
 
 namespace QnSTranslator.Logic.DataContext.Db
 {
@@ -64,14 +63,14 @@ namespace QnSTranslator.Logic.DataContext.Db
             BeforeModelCreating(modelBuilder);
             DoModelCreating(modelBuilder);
             AfterModelCreating(modelBuilder);
-
+#if DEBUG
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetForeignKeys())
                 .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
 
             foreach (var fk in cascadeFKs)
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
-
+#endif
             base.OnModelCreating(modelBuilder);
         }
         partial void BeforeModelCreating(ModelBuilder modelBuilder);
@@ -100,6 +99,9 @@ namespace QnSTranslator.Logic.DataContext.Db
                 .HasMaxLength(128);
             entityTypeBuilder
                 .Property(p => p.PasswordHash)
+                .IsRequired();
+            entityTypeBuilder
+                .Property(p => p.PasswordSalt)
                 .IsRequired();
         }
         partial void ConfigureEntityType(EntityTypeBuilder<Role> entityTypeBuilder)
@@ -133,26 +135,17 @@ namespace QnSTranslator.Logic.DataContext.Db
             entityTypeBuilder
                 .Ignore(p => p.JsonWebToken);
         }
-        partial void ConfigureEntityType(EntityTypeBuilder<Translation> entityTypeBuilder)
+        partial void ConfigureEntityType(EntityTypeBuilder<User> entityTypeBuilder)
         {
             entityTypeBuilder
-                .HasIndex(e => new { e.AppName, e.KeyLanguage, e.Key })
-                .IsUnique();
+                .Property(p => p.Firstname)
+                .HasMaxLength(64);
+            entityTypeBuilder
+                .Property(p => p.Lastname)
+                .HasMaxLength(64);
 
             entityTypeBuilder
-                .Property(p => p.AppName)
-                .IsRequired()
-                .HasMaxLength(256);
-
-            entityTypeBuilder
-                .Property(p => p.Key)
-                .IsRequired()
-                .HasMaxLength(256);
-
-            entityTypeBuilder
-                .Property(p => p.Value)
-                .IsRequired()
-                .HasMaxLength(1024);
+                .Ignore(p => p.Fullname);
         }
         #endregion Configuration
     }

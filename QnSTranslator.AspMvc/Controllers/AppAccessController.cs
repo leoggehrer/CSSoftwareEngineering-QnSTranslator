@@ -1,8 +1,9 @@
 //@QnSCodeCopy
 //MdStart
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -13,10 +14,10 @@ using Contract = QnSTranslator.Contracts.Business.Account.IAppAccess;
 
 namespace QnSTranslator.AspMvc.Controllers
 {
-    public partial class IdentityController : AccessController
+    public partial class AppAccessController : AccessController
     {
-        private readonly ILogger<IdentityController> _logger;
-        public IdentityController(ILogger<IdentityController> logger, IFactoryWrapper factoryWrapper)
+        private readonly ILogger<IdentityUserController> _logger;
+        public AppAccessController(ILogger<IdentityUserController> logger, IFactoryWrapper factoryWrapper)
             : base(factoryWrapper)
         {
             Constructing();
@@ -61,15 +62,15 @@ namespace QnSTranslator.AspMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("IdentityEdit")]
-        public async Task<IActionResult> IdentityEditAsync(int id, Identity identityModel, IFormCollection collection)
+        [ActionName("Edit")]
+        public async Task<IActionResult> EditAsync(int id, Identity identityModel, IFormCollection formCollection)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             async Task<IActionResult> CreateFailedAsync(Identity identity, string error)
             {
                 var entity = await ctrl.CreateAsync().ConfigureAwait(false);
 
-                entity.Identity.CopyProperties(identity);
+                entity.FirstItem.CopyProperties(identity);
 
                 var model = ConvertTo<Model, Contract>(entity);
 
@@ -81,7 +82,7 @@ namespace QnSTranslator.AspMvc.Controllers
             {
                 var entity = await ctrl.GetByIdAsync(identity.Id).ConfigureAwait(false);
 
-                entity.Identity.CopyProperties(identity);
+                entity.FirstItem.CopyProperties(identity);
 
                 var model = ConvertTo<Model, Contract>(entity);
 
@@ -94,15 +95,15 @@ namespace QnSTranslator.AspMvc.Controllers
                 using var ctrlRole = Factory.Create<Contracts.Persistence.Account.IRole>(SessionWrapper.SessionToken);
                 var roles = await ctrlRole.GetAllAsync().ConfigureAwait(false);
 
-                model.ClearRoles();
-                foreach (var item in collection.Where(l => l.Key.StartsWith("Assigned")))
+                model.ClearSecondItems();
+                foreach (var item in formCollection.Where(l => l.Key.StartsWith("Assigned")))
                 {
                     var roleId = item.Key.ToInt();
                     var role = roles.SingleOrDefault(r => r.Id == roleId);
 
                     if (role != null)
                     {
-                        model.AddRole(role);
+                        model.AddSecondItem(role);
                     }
                 }
             }
@@ -124,7 +125,7 @@ namespace QnSTranslator.AspMvc.Controllers
                 {
                     var entity = await ctrl.CreateAsync().ConfigureAwait(false);
 
-                    entity.Identity.CopyProperties(identityModel);
+                    entity.FirstItem.CopyProperties(identityModel);
                     var model = ConvertTo<Model, Contract>(entity);
 
                     await UpdateRolesAsync(model).ConfigureAwait(false);
@@ -137,7 +138,7 @@ namespace QnSTranslator.AspMvc.Controllers
                     var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
 
                     var model = ConvertTo<Model, Contract>(entity);
-                    model.Identity.CopyProperties(identityModel);
+                    model.FirstItem.CopyProperties(identityModel);
                     await UpdateRolesAsync(model).ConfigureAwait(false);
                     await ctrl.UpdateAsync(model).ConfigureAwait(false);
                 }
@@ -197,6 +198,87 @@ namespace QnSTranslator.AspMvc.Controllers
             }
         }
 
+
+        #region Export and Import
+        protected override string[] CsvHeader => new string[] { "Id", "FirstItem.Name", "FirstItem.Email", "FirstItem.Password", "FirstItem.AccessFailedCount", "FirstItem.EnableJwtAuth", "RoleList" };
+
+        [ActionName("Export")]
+        public async Task<FileResult> ExportAsync()
+        {
+            var fileName = "AppAccess.csv";
+            using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
+            var entities = (await ctrl.GetAllAsync().ConfigureAwait(false)).Select(e => ConvertTo<Model, Contract>(e));
+
+            return ExportDefault(CsvHeader, entities, fileName);
+        }
+
+        [ActionName("Import")]
+        public ActionResult ImportAsync(string error = null)
+        {
+            var model = new Models.Modules.Export.ImportProtocol() { BackController = ControllerName, ActionError = error };
+
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Import")]
+        public async Task<IActionResult> ImportAsync()
+        {
+            var index = 0;
+            var model = new Models.Modules.Export.ImportProtocol() { BackController = ControllerName };
+            var logInfos = new List<Models.Modules.Export.ImportLog>();
+            var importModels = ImportDefault<Model>(CsvHeader);
+            using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
+
+            foreach (var item in importModels)
+            {
+                index++;
+                try
+                {
+                    if (item.Action == Models.Modules.Export.ImportAction.Insert)
+                    {
+                        var entity = await ctrl.CreateAsync();
+
+                        CopyModels(CsvHeader, item.Model, entity);
+                        item.Model.SecondEntities.ForEach(e => entity.AddSecondItem(e));
+                        await ctrl.InsertAsync(entity);
+                    }
+                    else if (item.Action == Models.Modules.Export.ImportAction.Update)
+                    {
+                        var entity = await ctrl.GetByIdAsync(item.Id);
+
+                        CopyModels(CsvHeader, item.Model, entity);
+                        entity.ClearSecondItems();
+                        item.Model.SecondEntities.ForEach(e => entity.AddSecondItem(e));
+
+                        await ctrl.UpdateAsync(entity);
+                    }
+                    else if (item.Action == Models.Modules.Export.ImportAction.Delete)
+                    {
+                        await ctrl.DeleteAsync(item.Id);
+                    }
+                    logInfos.Add(new Models.Modules.Export.ImportLog
+                    {
+                        IsError = false,
+                        Prefix = $"Line: {index} - {item.Action}",
+                        Text = "OK",
+                    });
+                }
+                catch (Exception ex)
+                {
+                    logInfos.Add(new Models.Modules.Export.ImportLog
+                    {
+                        IsError = true,
+                        Prefix = $"Line: {index} - {item.Action}",
+                        Text = ex.Message,
+                    });
+                }
+            }
+            model.LogInfos = logInfos;
+            return View(model);
+        }
+        #endregion Export and Import
+
         #region Helpers
         private async Task LoadRolesAsync(Model model)
         {
@@ -207,7 +289,7 @@ namespace QnSTranslator.AspMvc.Controllers
 
             foreach (var item in roles)
             {
-                var assigned = model.RoleEntities.SingleOrDefault(r => r.Id == item.Id);
+                var assigned = model.SecondEntities.SingleOrDefault(r => r.Id == item.Id);
 
                 if (assigned != null)
                 {
@@ -218,7 +300,7 @@ namespace QnSTranslator.AspMvc.Controllers
                     var role = new Models.Persistence.Account.Role();
 
                     role.CopyProperties(item);
-                    model.RoleEntities.Add(role);
+                    model.SecondEntities.Add(role);
                 }
             }
         }

@@ -1,6 +1,5 @@
-//@QnSCodeCopy
+﻿//@QnSCustomizeCode
 //MdStart
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -59,7 +58,7 @@ namespace QnSTranslator.AspMvc.Controllers
                 predicate = $"{predicate}(Key.ToUpper().StartsWith(\"{page}\"))";
             }
             var entities = default(IEnumerable<Contracts.Persistence.Language.ITranslation>);
-                
+
             if (predicate.HasContent())
             {
                 entities = await ctrl.QueryAllAsync($"{predicate}").ConfigureAwait(false);

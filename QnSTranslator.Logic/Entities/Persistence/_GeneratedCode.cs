@@ -617,6 +617,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			get;
 			set;
 		}
+		public System.Collections.Generic.ICollection<QnSTranslator.Logic.Entities.Persistence.Account.User> Users
+		{
+			get;
+			set;
+		}
 	}
 }
 namespace QnSTranslator.Logic.Entities.Persistence.Account
@@ -1165,6 +1170,196 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 	partial class Role
 	{
 		public System.Collections.Generic.ICollection<QnSTranslator.Logic.Entities.Persistence.Account.IdentityXRole> IdentityXRoles
+		{
+			get;
+			set;
+		}
+	}
+}
+namespace QnSTranslator.Logic.Entities.Persistence.Account
+{
+	using System;
+	partial class User : QnSTranslator.Contracts.Persistence.Account.IUser
+	{
+		static User()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public User()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.Int32 IdentityId
+		{
+			get
+			{
+				OnIdentityIdReading();
+				return _identityId;
+			}
+			set
+			{
+				bool handled = false;
+				OnIdentityIdChanging(ref handled, ref _identityId);
+				if (handled == false)
+				{
+					this._identityId = value;
+				}
+				OnIdentityIdChanged();
+			}
+		}
+		private System.Int32 _identityId;
+		partial void OnIdentityIdReading();
+		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
+		partial void OnIdentityIdChanged();
+		public System.String Firstname
+		{
+			get
+			{
+				OnFirstnameReading();
+				return _firstname;
+			}
+			set
+			{
+				bool handled = false;
+				OnFirstnameChanging(ref handled, ref _firstname);
+				if (handled == false)
+				{
+					this._firstname = value;
+				}
+				OnFirstnameChanged();
+			}
+		}
+		private System.String _firstname;
+		partial void OnFirstnameReading();
+		partial void OnFirstnameChanging(ref bool handled, ref System.String _firstname);
+		partial void OnFirstnameChanged();
+		public System.String Lastname
+		{
+			get
+			{
+				OnLastnameReading();
+				return _lastname;
+			}
+			set
+			{
+				bool handled = false;
+				OnLastnameChanging(ref handled, ref _lastname);
+				if (handled == false)
+				{
+					this._lastname = value;
+				}
+				OnLastnameChanged();
+			}
+		}
+		private System.String _lastname;
+		partial void OnLastnameReading();
+		partial void OnLastnameChanging(ref bool handled, ref System.String _lastname);
+		partial void OnLastnameChanged();
+		public System.String Fullname
+		{
+			get
+			{
+				OnFullnameReading();
+				return _fullname;
+			}
+			set
+			{
+				bool handled = false;
+				OnFullnameChanging(ref handled, ref _fullname);
+				if (handled == false)
+				{
+					this._fullname = value;
+				}
+				OnFullnameChanged();
+			}
+		}
+		private System.String _fullname;
+		partial void OnFullnameReading();
+		partial void OnFullnameChanging(ref bool handled, ref System.String _fullname);
+		partial void OnFullnameChanged();
+		public QnSTranslator.Contracts.Modules.Common.State State
+		{
+			get
+			{
+				OnStateReading();
+				return _state;
+			}
+			set
+			{
+				bool handled = false;
+				OnStateChanging(ref handled, ref _state);
+				if (handled == false)
+				{
+					this._state = value;
+				}
+				OnStateChanged();
+			}
+		}
+		private QnSTranslator.Contracts.Modules.Common.State _state;
+		partial void OnStateReading();
+		partial void OnStateChanging(ref bool handled, ref QnSTranslator.Contracts.Modules.Common.State _state);
+		partial void OnStateChanged();
+		public void CopyProperties(QnSTranslator.Contracts.Persistence.Account.IUser other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				IdentityId = other.IdentityId;
+				Firstname = other.Firstname;
+				Lastname = other.Lastname;
+				Fullname = other.Fullname;
+				State = other.State;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QnSTranslator.Contracts.Persistence.Account.IUser other, ref bool handled);
+		partial void AfterCopyProperties(QnSTranslator.Contracts.Persistence.Account.IUser other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QnSTranslator.Contracts.Persistence.Account.IUser instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QnSTranslator.Contracts.Persistence.Account.IUser other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname) && IsEqualsWith(Fullname, other.Fullname) && State == other.State;
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, IdentityId, Firstname, Lastname, Fullname, HashCode.Combine(State));
+		}
+	}
+}
+namespace QnSTranslator.Logic.Entities.Persistence.Account
+{
+	partial class User : IdentityObject
+	{
+	}
+}
+namespace QnSTranslator.Logic.Entities.Persistence.Account
+{
+	partial class User
+	{
+		public QnSTranslator.Logic.Entities.Persistence.Account.Identity Identity
 		{
 			get;
 			set;

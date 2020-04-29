@@ -1,0 +1,30 @@
+@*@QnSCodeCopy*@
+@*This partial view can alternatively be used with the shared index view.*@
+@model QnSTranslator.AspMvc.Models.Business.Account.AppAccess
+
+@{
+    Func<string, string> translateFor = ViewData["TranslateFor"] as Func<string, string>;
+}
+
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => Model.FirstItem.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.FirstItem.Email)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.FirstItem.EnableJwtAuth)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.FirstItem.AccessFailedCount)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.FirstItem.State)
+    </td>
+    <td>
+        @Html.ActionLink(translateFor("Edit"), "Edit", new { id = Model.Id }) |
+        @Html.ActionLink(translateFor("Details"), "Details", new { id = Model.Id }) |
+        @Html.ActionLink(translateFor("Delete"), "Delete", new { id = Model.Id })
+    </td>
+</tr>

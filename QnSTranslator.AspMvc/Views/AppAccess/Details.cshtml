@@ -1,6 +1,5 @@
 @*@QnSCodeCopy*@
 @using Microsoft.AspNetCore.Mvc.Razor
-@using Microsoft.AspNetCore.Mvc.Rendering
 @using QnSTranslator.AspMvc.Modules.Session
 @model QnSTranslator.AspMvc.Models.Business.Account.AppAccess
 @*Begin:Header*@
@@ -10,6 +9,9 @@
     string beginLabel = $"<!--View Begin: '{currentView}'-->";
     @Html.Raw(beginLabel)
 #endif
+}
+
+@{
     SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
     Func<string, string> translate = sessionWrapper.Translate;
 }
@@ -29,25 +31,24 @@
     <div class="p-sm-2 mr-auto">
         <h4>@translate(controller)</h4>
     </div>
+    <div class="p-sm-2">
+        <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translateFor("Back to List")</a>
+    </div>
+    <div class="p-sm-2">
+        @Html.ActionLink(translateFor("Edit"), "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
+    </div>
 </div>
 <hr />
 
-<form asp-action="IdentityEdit">
-    @if (Model.HasError)
-    {
-        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
-    }
-    <div style="margin-top: 1em;">
-        @await Html.PartialAsync("_IdentityEdit", Model.Identity)
-    </div>
+<div style="margin-top: 1em;">
+    @await Html.PartialAsync("_IdentityDetails", Model.FirstItem)
+</div>
 
-    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
+<div style="margin-top: 1em;">
+    <h4>Rolen</h4>
+    @await Html.PartialAsync("_RoleListDetails", Model.SecondItems)
+</div>
 
-    <div style="margin-top: 1em;">
-        <h4>Rolen</h4>
-        @await Html.PartialAsync("_RoleListEdit", Model.Roles)
-    </div>
-</form>
 @*Begin:Footer*@
 @{
 #if DEBUG
@@ -57,7 +58,3 @@
 #endif
 }
 @*End:Footer*@
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

@@ -10,7 +10,7 @@ using QnSTranslator.Logic.DataContext.Db;
 namespace QnSTranslator.Logic.Migrations
 {
     [DbContext(typeof(QnSTranslatorDbContext))]
-    [Migration("20200401055221_InitDb")]
+    [Migration("20200429110724_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,10 @@ namespace QnSTranslator.Logic.Migrations
                         .HasMaxLength(128);
 
                     b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
@@ -195,6 +199,39 @@ namespace QnSTranslator.Logic.Migrations
                     b.ToTable("Role","Account");
                 });
 
+            modelBuilder.Entity("QnSTranslator.Logic.Entities.Persistence.Account.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Firstname")
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("IdentityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Lastname")
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdentityId");
+
+                    b.ToTable("User","Account");
+                });
+
             modelBuilder.Entity("QnSTranslator.Logic.Entities.Persistence.Language.Translation", b =>
                 {
                     b.Property<int>("Id")
@@ -264,6 +301,15 @@ namespace QnSTranslator.Logic.Migrations
                 {
                     b.HasOne("QnSTranslator.Logic.Entities.Persistence.Account.Identity", "Identity")
                         .WithMany("LoginSessions")
+                        .HasForeignKey("IdentityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QnSTranslator.Logic.Entities.Persistence.Account.User", b =>
+                {
+                    b.HasOne("QnSTranslator.Logic.Entities.Persistence.Account.Identity", "Identity")
+                        .WithMany("Users")
                         .HasForeignKey("IdentityId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

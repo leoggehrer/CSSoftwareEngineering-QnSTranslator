@@ -10,8 +10,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class ClassGenerator : Generator
     {
-        public const string DelegatePropertyName = "DelegateObject";
-
         protected ClassGenerator(SolutionProperties solutionProperties)
             : base(solutionProperties)
         {
@@ -114,7 +112,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
+                                                    && p.DeclaringType.Name.Equals(IOneToOneName) == false
+                                                    && p.DeclaringType.Name.Equals(IOneToManyName) == false))
             {
                 createPropertyAttributes?.Invoke(type, item, result);
                 result.AddRange(CreatePartialProperty(item));
@@ -148,7 +148,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 //result.Add($"internal virtual {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
             }
             result.Add($"public {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false))
             {
                 result.AddRange(CreatePartialDelegateProperty(item));
             }
@@ -340,6 +340,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         internal static IEnumerable<string> CreateCopyProperties(Type type, string copyType)
         {
             type.CheckArgument(nameof(type));
+            copyType.CheckArgument(nameof(copyType));
 
             var result = new List<string>
             {
@@ -357,7 +358,27 @@ namespace CSharpCodeGenerator.ConApp.Generation
             };
             foreach (var item in GetPublicProperties(type))
             {
-                if (item.CanRead)
+                if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToOneName))
+                {
+                    result.Add($"{FirstItemName}.CopyProperties(other.{FirstItemName});");
+                }
+                else if (item.Name.Equals(SecondItemName) && item.DeclaringType.Name.Equals(IOneToOneName))
+                {
+                    result.Add($"{SecondItemName}.CopyProperties(other.{SecondItemName});");
+                }
+                else if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToManyName))
+                {
+                    result.Add($"{FirstItemName}.CopyProperties(other.{FirstItemName});");
+                }
+                else if (item.Name.Equals(SecondItemsName) && item.DeclaringType.Name.Equals(IOneToManyName))
+                {
+                    result.Add($"Clear{SecondItemsName}();");
+                    result.Add($"foreach (var item in other.{SecondItemsName})");
+                    result.Add("{");
+                    result.Add("AddSecondItem(item);");
+                    result.Add("}");
+                }
+                else if (item.CanRead)
                 {
                     result.Add($"{item.Name} = other.{item.Name};");
                 }

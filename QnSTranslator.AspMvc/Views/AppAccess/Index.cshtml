@@ -26,27 +26,41 @@
 
 <h1>@title</h1>
 
-<p style="margin-top: 1em;">
-    <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
-</p>
-
+@if (sessionWrapper.IsAuthenticated && sessionWrapper.HasRole("SysAdmin", "AppAdmin"))
+{
+    <div class="d-flex bg-transparent">
+        <div class="mr-auto p-sm-2">
+            <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
+        </div>
+        <div class="p-sm-2">
+            <a asp-action="Export" class="btn btn-outline-secondary">@translateFor("Export")</a>
+        </div>
+        <div class="p-sm-2">
+            <a asp-action="Import" class="btn btn-outline-primary">@translateFor("Import")</a>
+        </div>
+    </div>
+}
+<p></p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.Identity.Name))
+                @translateFor(Html.DisplayNameFor(model => model.FirstItem.Name))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.Identity.Email))
+                @translateFor(Html.DisplayNameFor(model => model.FirstItem.Email))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.Identity.EnableJwtAuth))
+                @translateFor(Html.DisplayNameFor(model => model.FirstItem.EnableJwtAuth))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.Identity.AccessFailedCount))
+                @translateFor(Html.DisplayNameFor(model => model.SecondItems))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.Identity.State))
+                @translateFor(Html.DisplayNameFor(model => model.FirstItem.AccessFailedCount))
+            </th>
+            <th>
+                @translateFor(Html.DisplayNameFor(model => model.FirstItem.State))
             </th>
             <th></th>
         </tr>
@@ -56,19 +70,27 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identity.Name)
+                    @Html.DisplayFor(modelItem => item.FirstItem.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identity.Email)
+                    @Html.DisplayFor(modelItem => item.FirstItem.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identity.EnableJwtAuth)
+                    @Html.DisplayFor(modelItem => item.FirstItem.EnableJwtAuth)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identity.AccessFailedCount)
+                    <ul>
+                        @foreach (var role in item.SecondItems)
+                        {
+                            <li>@role.Designation</li>
+                        }
+                    </ul>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identity.State)
+                    @Html.DisplayFor(modelItem => item.FirstItem.AccessFailedCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstItem.State)
                 </td>
                 <td>
                     @Html.ActionLink(translateFor("Edit"), "Edit", new { id = item.Id }) |

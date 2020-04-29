@@ -11,6 +11,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class Generator
     {
+        static Generator()
+        {
+            Constructing();
+            Constructed();
+        }
+        static partial void Constructing();
+        static partial void Constructed();
+
         public enum InterfaceType
         {
             Unknown,
@@ -31,6 +39,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string ModulesLabel => "Modules";
         public static string BusinessLabel => "Business";
         public static string PersistenceLabel => "Persistence";
+
+        public static string DelegatePropertyName => "DelegateObject";
+        public static string IIdentifiableName => "IIdentifiable";
+        public static string IOneToOneName => "IOneToOne`2";
+        public static string IOneToManyName => "IOneToMany`2";
+        public static string FirstItemName => "FirstItem";
+        public static string SecondItemName => "SecondItem";
+        public static string SecondItemsName => "SecondItems";
 
         internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)
         {
@@ -102,7 +118,19 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             if (type.IsInterface)
             {
-                result = type.GetInterfaces().Any(i => i.Name.Equals("IIdentifiable"));
+                result = type.GetInterfaces().Any(i => i.Name.Equals(IIdentifiableName));
+            }
+            return result;
+        }
+        internal static bool HasOneToManyBase(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = false;
+
+            if (type.IsInterface)
+            {
+                result = type.GetInterfaces().Any(i => i.Name.Equals(IOneToManyName));
             }
             return result;
         }
@@ -153,8 +181,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
         #endregion Interface helpers
-
-
 
         /// <summary>
         /// Diese Methode ueberprueft, ob der Typ ein Schnittstellen-Typ ist. Wenn nicht,
@@ -298,19 +324,40 @@ namespace CSharpCodeGenerator.ConApp.Generation
         /// Diese Methode ermittelt den Entity Namen aus seinem Schnittstellen Typ.
         /// </summary>
         /// <param name="type">Schnittstellen-Typ</param>
-        /// <returns>MethodName der Entitaet.</returns>
+        /// <returns>Name der Entitaet.</returns>
         public static string CreateEntityFullNameFromInterface(Type type)
         {
             CheckInterfaceType(type);
 
             var result = string.Empty;
 
-            if (type.GetTypeInfo().IsInterface)
+            if (type.IsInterface)
             {
                 var entityName = type.Name.Substring(1);
 
                 result = type.FullName.Replace(type.Name, entityName);
                 result = result.Replace(".Contracts", ".Logic.Entities");
+            }
+            return result;
+        }
+        /// <summary>
+        /// Diese Methode ermittelt den Kontroller Namen aus seinem Schnittstellen Typ.
+        /// </summary>
+        /// <param name="type">Schnittstellen-Typ</param>
+        /// <returns>Name des Kontrollers.</returns>
+        public static string CreateControllerFullNameFromInterface(Type type)
+        {
+            CheckInterfaceType(type);
+
+            var result = string.Empty;
+
+            if (type.IsInterface)
+            {
+                var entityName = type.Name.Substring(1);
+
+                result = type.FullName.Replace(type.Name, entityName);
+                result = result.Replace(".Contracts", ".Logic.Controllers");
+                result = $"{result}Controller";
             }
             return result;
         }

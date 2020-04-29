@@ -15,9 +15,17 @@ namespace QnSTranslator.Adapters
 				{
 					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Persistence.Account.IRole>() as Contracts.Client.IAdapterAccess<I>;
 				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Persistence.Account.IUser))
+				{
+					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Persistence.Account.IUser>() as Contracts.Client.IAdapterAccess<I>;
+				}
 				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IAppAccess))
 				{
 					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Business.Account.IAppAccess>() as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IIdentityUser))
+				{
+					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Business.Account.IIdentityUser>() as Contracts.Client.IAdapterAccess<I>;
 				}
 			}
 			else if (Adapter == AdapterType.Service)
@@ -30,9 +38,17 @@ namespace QnSTranslator.Adapters
 				{
 					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Persistence.Account.IRole, Transfer.Persistence.Account.Role>(BaseUri, "Role") as Contracts.Client.IAdapterAccess<I>;
 				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Persistence.Account.IUser))
+				{
+					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Persistence.Account.IUser, Transfer.Persistence.Account.User>(BaseUri, "User") as Contracts.Client.IAdapterAccess<I>;
+				}
 				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IAppAccess))
 				{
 					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Business.Account.IAppAccess, Transfer.Business.Account.AppAccess>(BaseUri, "AppAccess") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IIdentityUser))
+				{
+					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Business.Account.IIdentityUser, Transfer.Business.Account.IdentityUser>(BaseUri, "IdentityUser") as Contracts.Client.IAdapterAccess<I>;
 				}
 			}
 			return result;
@@ -50,9 +66,17 @@ namespace QnSTranslator.Adapters
 				{
 					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Persistence.Account.IRole>(sessionToken) as Contracts.Client.IAdapterAccess<I>;
 				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Persistence.Account.IUser))
+				{
+					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Persistence.Account.IUser>(sessionToken) as Contracts.Client.IAdapterAccess<I>;
+				}
 				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IAppAccess))
 				{
 					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Business.Account.IAppAccess>(sessionToken) as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IIdentityUser))
+				{
+					result = new Controller.GenericControllerAdapter<QnSTranslator.Contracts.Business.Account.IIdentityUser>(sessionToken) as Contracts.Client.IAdapterAccess<I>;
 				}
 			}
 			else if (Adapter == AdapterType.Service)
@@ -65,9 +89,17 @@ namespace QnSTranslator.Adapters
 				{
 					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Persistence.Account.IRole, Transfer.Persistence.Account.Role>(sessionToken, BaseUri, "Role") as Contracts.Client.IAdapterAccess<I>;
 				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Persistence.Account.IUser))
+				{
+					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Persistence.Account.IUser, Transfer.Persistence.Account.User>(sessionToken, BaseUri, "User") as Contracts.Client.IAdapterAccess<I>;
+				}
 				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IAppAccess))
 				{
 					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Business.Account.IAppAccess, Transfer.Business.Account.AppAccess>(sessionToken, BaseUri, "AppAccess") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QnSTranslator.Contracts.Business.Account.IIdentityUser))
+				{
+					result = new Service.GenericServiceAdapter<QnSTranslator.Contracts.Business.Account.IIdentityUser, Transfer.Business.Account.IdentityUser>(sessionToken, BaseUri, "IdentityUser") as Contracts.Client.IAdapterAccess<I>;
 				}
 			}
 			return result;

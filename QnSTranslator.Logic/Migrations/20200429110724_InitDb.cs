@@ -22,6 +22,7 @@ namespace QnSTranslator.Logic.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
                     PasswordHash = table.Column<byte[]>(nullable: false),
+                    PasswordSalt = table.Column<byte[]>(nullable: false),
                     Guid = table.Column<string>(maxLength: 36, nullable: false),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
                     Email = table.Column<string>(maxLength: 128, nullable: false),
@@ -122,6 +123,31 @@ namespace QnSTranslator.Logic.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User",
+                schema: "Account",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    IdentityId = table.Column<int>(nullable: false),
+                    Firstname = table.Column<string>(maxLength: 64, nullable: true),
+                    Lastname = table.Column<string>(maxLength: 64, nullable: true),
+                    State = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Identity_IdentityId",
+                        column: x => x.IdentityId,
+                        principalSchema: "Account",
+                        principalTable: "Identity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IdentityXRole",
                 schema: "Account",
                 columns: table => new
@@ -190,6 +216,12 @@ namespace QnSTranslator.Logic.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_User_IdentityId",
+                schema: "Account",
+                table: "User",
+                column: "IdentityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Translation_AppName_KeyLanguage_Key",
                 schema: "Language",
                 table: "Translation",
@@ -209,6 +241,10 @@ namespace QnSTranslator.Logic.Migrations
 
             migrationBuilder.DropTable(
                 name: "LoginSession",
+                schema: "Account");
+
+            migrationBuilder.DropTable(
+                name: "User",
                 schema: "Account");
 
             migrationBuilder.DropTable(

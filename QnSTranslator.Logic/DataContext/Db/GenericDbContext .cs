@@ -26,7 +26,11 @@ namespace QnSTranslator.Logic.DataContext.Db
         partial void Constructing();
         partial void Constructed();
 
-        IQueryable<E> IContext.Set<I, E>()
+        DbSet<E> IContext.ContextSet<I, E>()
+        {
+            return Set<I, E>();
+        }
+        IQueryable<E> IContext.QueryableSet<I, E>()
         {
             return Set<I, E>();
         }
@@ -93,6 +97,30 @@ namespace QnSTranslator.Logic.DataContext.Db
         public Task<int> SaveChangesAsync()
         {
             return base.SaveChangesAsync();
+        }
+        public Task<int> RejectChangesAsync()
+        {
+            return Task.Run(() =>
+            {
+                int count = 0;
+                foreach (var item in ChangeTracker.Entries())
+                {
+                    switch (item.State)
+                    {
+                        case EntityState.Modified:
+                        case EntityState.Deleted:
+                            count++;
+                            item.State = EntityState.Modified; //Revert changes made to deleted entity.
+                            item.State = EntityState.Unchanged;
+                            break;
+                        case EntityState.Added:
+                            count++;
+                            item.State = EntityState.Detached;
+                            break;
+                    }
+                }
+                return count;
+            });
         }
     }
 }

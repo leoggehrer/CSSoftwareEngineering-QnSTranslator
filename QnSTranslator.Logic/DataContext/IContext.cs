@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using QnSTranslator.Contracts;
 using QnSTranslator.Logic.Entities;
 
@@ -10,7 +11,11 @@ namespace QnSTranslator.Logic.DataContext
 {
     internal interface IContext : IDisposable
     {
-        IQueryable<E> Set<I, E>()
+        DbSet<E> ContextSet<I, E>()
+            where I : IIdentifiable
+            where E : IdentityObject, I;
+
+        IQueryable<E> QueryableSet<I, E>()
             where I : IIdentifiable
             where E : IdentityObject, I;
 
@@ -40,6 +45,8 @@ namespace QnSTranslator.Logic.DataContext
             where E : IdentityObject, I;
 
         Task<int> SaveChangesAsync();
+
+        Task<int> RejectChangesAsync();
         #endregion Async-Methods
     }
 }
