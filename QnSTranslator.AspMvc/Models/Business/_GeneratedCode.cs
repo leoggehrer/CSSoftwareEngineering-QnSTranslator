@@ -27,7 +27,7 @@ namespace QnSTranslator.AspMvc.Models.Business.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				ClearSecondItems();
 				foreach (var item in other.SecondItems)
@@ -76,7 +76,7 @@ namespace QnSTranslator.AspMvc.Models.Business.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				SecondItem.CopyProperties(other.SecondItem);
 			}

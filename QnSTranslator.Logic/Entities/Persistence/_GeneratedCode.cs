@@ -138,7 +138,7 @@ namespace QnSTranslator.Logic.Entities.Persistence.Language
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				AppName = other.AppName;
 				KeyLanguage = other.KeyLanguage;
 				Key = other.Key;
@@ -163,11 +163,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Language
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(AppName, other.AppName) && KeyLanguage == other.KeyLanguage && IsEqualsWith(Key, other.Key) && ValueLanguage == other.ValueLanguage && IsEqualsWith(Value, other.Value);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(AppName, other.AppName) && KeyLanguage == other.KeyLanguage && IsEqualsWith(Key, other.Key) && ValueLanguage == other.ValueLanguage && IsEqualsWith(Value, other.Value);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, AppName, KeyLanguage, Key, ValueLanguage, HashCode.Combine(Value));
+			return HashCode.Combine(Id, RowVersion, AppName, KeyLanguage, Key, ValueLanguage, HashCode.Combine(Value));
 		}
 	}
 }
@@ -323,7 +323,7 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Time = other.Time;
 				Subject = other.Subject;
@@ -348,11 +348,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && Time == other.Time && IsEqualsWith(Subject, other.Subject) && IsEqualsWith(Action, other.Action) && IsEqualsWith(Info, other.Info);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && Time == other.Time && IsEqualsWith(Subject, other.Subject) && IsEqualsWith(Action, other.Action) && IsEqualsWith(Info, other.Info);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, Time, Subject, Action, HashCode.Combine(Info));
+			return HashCode.Combine(Id, RowVersion, IdentityId, Time, Subject, Action, HashCode.Combine(Info));
 		}
 	}
 }
@@ -557,7 +557,7 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Guid = other.Guid;
 				Name = other.Name;
 				Email = other.Email;
@@ -584,11 +584,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Guid, other.Guid) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(Password, other.Password) && EnableJwtAuth == other.EnableJwtAuth && AccessFailedCount == other.AccessFailedCount && State == other.State;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(Guid, other.Guid) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(Password, other.Password) && EnableJwtAuth == other.EnableJwtAuth && AccessFailedCount == other.AccessFailedCount && State == other.State;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Guid, Name, Email, Password, HashCode.Combine(EnableJwtAuth, AccessFailedCount, State));
+			return HashCode.Combine(Id, RowVersion, Guid, Name, Email, Password, HashCode.Combine(EnableJwtAuth, AccessFailedCount, State));
 		}
 	}
 }
@@ -698,7 +698,7 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				RoleId = other.RoleId;
 			}
@@ -720,11 +720,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && RoleId == other.RoleId;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && RoleId == other.RoleId;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, RoleId);
+			return HashCode.Combine(Id, RowVersion, IdentityId, RoleId);
 		}
 	}
 }
@@ -1000,7 +1000,7 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				IsRemoteAuth = other.IsRemoteAuth;
 				Origin = other.Origin;
@@ -1030,11 +1030,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsRemoteAuth == other.IsRemoteAuth && IsEqualsWith(Origin, other.Origin) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && IsRemoteAuth == other.IsRemoteAuth && IsEqualsWith(Origin, other.Origin) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, IsRemoteAuth, Origin, Name, HashCode.Combine(Email, JsonWebToken, SessionToken, LoginTime, LastAccess, LogoutTime));
+			return HashCode.Combine(Id, RowVersion, IdentityId, IsRemoteAuth, Origin, Name, HashCode.Combine(Email, JsonWebToken, SessionToken, LoginTime, LastAccess, LogoutTime));
 		}
 	}
 }
@@ -1129,7 +1129,7 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Designation = other.Designation;
 				Description = other.Description;
 			}
@@ -1151,11 +1151,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Designation, other.Designation) && IsEqualsWith(Description, other.Description);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(Designation, other.Designation) && IsEqualsWith(Description, other.Description);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Designation, Description);
+			return HashCode.Combine(Id, RowVersion, Designation, Description);
 		}
 	}
 }
@@ -1261,50 +1261,6 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 		partial void OnLastnameReading();
 		partial void OnLastnameChanging(ref bool handled, ref System.String _lastname);
 		partial void OnLastnameChanged();
-		public System.String Fullname
-		{
-			get
-			{
-				OnFullnameReading();
-				return _fullname;
-			}
-			set
-			{
-				bool handled = false;
-				OnFullnameChanging(ref handled, ref _fullname);
-				if (handled == false)
-				{
-					this._fullname = value;
-				}
-				OnFullnameChanged();
-			}
-		}
-		private System.String _fullname;
-		partial void OnFullnameReading();
-		partial void OnFullnameChanging(ref bool handled, ref System.String _fullname);
-		partial void OnFullnameChanged();
-		public QnSTranslator.Contracts.Modules.Common.State State
-		{
-			get
-			{
-				OnStateReading();
-				return _state;
-			}
-			set
-			{
-				bool handled = false;
-				OnStateChanging(ref handled, ref _state);
-				if (handled == false)
-				{
-					this._state = value;
-				}
-				OnStateChanged();
-			}
-		}
-		private QnSTranslator.Contracts.Modules.Common.State _state;
-		partial void OnStateReading();
-		partial void OnStateChanging(ref bool handled, ref QnSTranslator.Contracts.Modules.Common.State _state);
-		partial void OnStateChanged();
 		public void CopyProperties(QnSTranslator.Contracts.Persistence.Account.IUser other)
 		{
 			if (other == null)
@@ -1316,12 +1272,10 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Firstname = other.Firstname;
 				Lastname = other.Lastname;
-				Fullname = other.Fullname;
-				State = other.State;
 			}
 			AfterCopyProperties(other);
 		}
@@ -1341,11 +1295,11 @@ namespace QnSTranslator.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname) && IsEqualsWith(Fullname, other.Fullname) && State == other.State;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, Firstname, Lastname, Fullname, HashCode.Combine(State));
+			return HashCode.Combine(Id, RowVersion, IdentityId, Firstname, Lastname);
 		}
 	}
 }

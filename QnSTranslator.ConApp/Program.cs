@@ -8,15 +8,21 @@ namespace QnSTranslator.ConApp
     class Program
     {
         static string SaUser => "SysAdmin";
-        static string SaEmail => "SysAdmin@QnSTranslator.gmx.at";
+        static string SaEmail => "SysAdmin.QnSTranslator@gmx.at";
         static string SaPwd => "Sys2189!Admin";
         static bool SaEnableJwt => true;
 
         static string AaUser => "AppAdmin";
-        static string AaEmail => "AppAdmin@QnSTranslator.gmx.at";
+        static string AaEmail => "AppAdmin.QnSTranslator@gmx.at";
         static string AaPwd => "App2189!Admin";
         static string AaRole => "AppAdmin";
         static bool AaEnableJwt => true;
+
+        static string AuUser => "AppUser";
+        static string AuEmail => "AppUser.QnSTranslator@gmx.at";
+        static string AuPwd => "App2189!User";
+        static string AuRole => "AppUser";
+        static bool AuEnableJwt => true;
 
         static async Task Main(string[] args)
         {
@@ -41,16 +47,7 @@ namespace QnSTranslator.ConApp
             {
                 await InitAppAccessAsync();
                 await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
-
-                //await AddAppAccess("schueler1", "schueler1@gmx.com", "Passme1234!", AaEnableJwt);
-                //await AddAppAccess("schueler2", "schueler2@gmx.com", "Passme1234!", AaEnableJwt);
-                //await AddAppAccess("schueler3", "schueler3@gmx.com", "Passme1234!", AaEnableJwt);
-
-                //var rmLogin = await rmAccountManager.LogonAsync("schueler1@gmx.com", "Passme123!");
-                //var appLogin = await appAccountManager.LogonAsync(rmLogin.JsonWebToken);
-
-                //await appAccountManager.LogoutAsync(appLogin.SessionToken);
-                //await rmAccountManager.LogoutAsync(rmLogin.SessionToken);
+                await AddAppAccess(AuUser, AuEmail, AuPwd, AuEnableJwt, AuRole);
             }
             catch (Exception ex)
             {

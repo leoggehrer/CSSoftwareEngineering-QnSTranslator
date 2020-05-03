@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Razor
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using CommonBase.Extensions
-@using QnSTranslator.AspMvc.Extensions
 @using QnSTranslator.AspMvc.Modules.Session
 @model QnSTranslator.AspMvc.Models.Persistence.Language.Translation
 @*Begin:Header*@
@@ -41,7 +40,7 @@
     <div class="col-md-8">
         <form asp-action="Edit">
             <input asp-for="Id" type="hidden" />
-            <input asp-for="Timestamp" type="hidden" />
+            <input asp-for="RowVersion" type="hidden" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="AppName" class="control-label"></label>

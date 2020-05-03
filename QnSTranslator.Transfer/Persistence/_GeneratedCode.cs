@@ -138,7 +138,7 @@ namespace QnSTranslator.Transfer.Persistence.Language
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				AppName = other.AppName;
 				KeyLanguage = other.KeyLanguage;
 				Key = other.Key;
@@ -297,7 +297,7 @@ namespace QnSTranslator.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Time = other.Time;
 				Subject = other.Subject;
@@ -500,7 +500,7 @@ namespace QnSTranslator.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Guid = other.Guid;
 				Name = other.Name;
 				Email = other.Email;
@@ -595,7 +595,7 @@ namespace QnSTranslator.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				RoleId = other.RoleId;
 			}
@@ -861,7 +861,7 @@ namespace QnSTranslator.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				IsRemoteAuth = other.IsRemoteAuth;
 				Origin = other.Origin;
@@ -959,7 +959,7 @@ namespace QnSTranslator.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Designation = other.Designation;
 				Description = other.Description;
 			}
@@ -1060,50 +1060,6 @@ namespace QnSTranslator.Transfer.Persistence.Account
 		partial void OnLastnameReading();
 		partial void OnLastnameChanging(ref bool handled, ref System.String _lastname);
 		partial void OnLastnameChanged();
-		public System.String Fullname
-		{
-			get
-			{
-				OnFullnameReading();
-				return _fullname;
-			}
-			set
-			{
-				bool handled = false;
-				OnFullnameChanging(ref handled, ref _fullname);
-				if (handled == false)
-				{
-					this._fullname = value;
-				}
-				OnFullnameChanged();
-			}
-		}
-		private System.String _fullname;
-		partial void OnFullnameReading();
-		partial void OnFullnameChanging(ref bool handled, ref System.String _fullname);
-		partial void OnFullnameChanged();
-		public QnSTranslator.Contracts.Modules.Common.State State
-		{
-			get
-			{
-				OnStateReading();
-				return _state;
-			}
-			set
-			{
-				bool handled = false;
-				OnStateChanging(ref handled, ref _state);
-				if (handled == false)
-				{
-					this._state = value;
-				}
-				OnStateChanged();
-			}
-		}
-		private QnSTranslator.Contracts.Modules.Common.State _state;
-		partial void OnStateReading();
-		partial void OnStateChanging(ref bool handled, ref QnSTranslator.Contracts.Modules.Common.State _state);
-		partial void OnStateChanged();
 		public void CopyProperties(QnSTranslator.Contracts.Persistence.Account.IUser other)
 		{
 			if (other == null)
@@ -1115,12 +1071,10 @@ namespace QnSTranslator.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Firstname = other.Firstname;
 				Lastname = other.Lastname;
-				Fullname = other.Fullname;
-				State = other.State;
 			}
 			AfterCopyProperties(other);
 		}

@@ -28,7 +28,7 @@ namespace QnSTranslator.Logic.Entities.Business.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				ClearSecondItems();
 				foreach (var item in other.SecondItems)
@@ -54,11 +54,11 @@ namespace QnSTranslator.Logic.Entities.Business.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItems, other.SecondItems);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItems, other.SecondItems);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, FirstItem, SecondItems);
+			return HashCode.Combine(Id, RowVersion, FirstItem, SecondItems);
 		}
 	}
 }
@@ -98,7 +98,7 @@ namespace QnSTranslator.Logic.Entities.Business.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				SecondItem.CopyProperties(other.SecondItem);
 			}
@@ -120,11 +120,11 @@ namespace QnSTranslator.Logic.Entities.Business.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItem, other.SecondItem);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItem, other.SecondItem);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, FirstItem, SecondItem);
+			return HashCode.Combine(Id, RowVersion, FirstItem, SecondItem);
 		}
 	}
 }

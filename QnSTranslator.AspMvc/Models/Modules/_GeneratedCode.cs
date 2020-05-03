@@ -137,7 +137,7 @@ namespace QnSTranslator.AspMvc.Models.Modules.Language
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				AppName = other.AppName;
 				KeyLanguage = other.KeyLanguage;
 				Key = other.Key;

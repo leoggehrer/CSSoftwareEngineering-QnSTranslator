@@ -9,8 +9,6 @@ namespace QnSTranslator.Contracts.Persistence.Account
         int IdentityId { get; set; }
         string Firstname { get; set; }
         string Lastname { get; set; }
-        string Fullname { get; }
-        State State { get; set; }
     }
 }
 //MdEnd
