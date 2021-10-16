@@ -7,7 +7,7 @@ using CommonBase.Extensions;
 
 namespace QnSTranslator.Logic.Entities.Modules
 {
-	internal partial class ModuleObject
+    internal partial class ModuleObject
     {
 		protected static bool IsEqualsWith(object obj1, object obj2)
 		{

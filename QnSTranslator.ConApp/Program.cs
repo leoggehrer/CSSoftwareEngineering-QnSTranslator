@@ -5,26 +5,37 @@ using AccountManager = QnSTranslator.Adapters.Modules.Account.AccountManager;
 
 namespace QnSTranslator.ConApp
 {
-    class Program
+    internal class Program
     {
-        static string SaUser => "SysAdmin";
-        static string SaEmail => "SysAdmin.QnSTranslator@gmx.at";
-        static string SaPwd => "Sys2189!Admin";
-        static bool SaEnableJwt => true;
+        private static string SaUser => "SysAdmin";
 
-        static string AaUser => "AppAdmin";
-        static string AaEmail => "AppAdmin.QnSTranslator@gmx.at";
-        static string AaPwd => "App2189!Admin";
-        static string AaRole => "AppAdmin";
-        static bool AaEnableJwt => true;
+        private static string SaEmail => "SysAdmin.QnSTranslator@gmx.at";
 
-        static string AuUser => "AppUser";
-        static string AuEmail => "AppUser.QnSTranslator@gmx.at";
-        static string AuPwd => "App2189!User";
-        static string AuRole => "AppUser";
-        static bool AuEnableJwt => true;
+        private static string SaPwd => "Sys2189!Admin";
 
-        static async Task Main(string[] args)
+        private static bool SaEnableJwt => true;
+
+        private static string AaUser => "AppAdmin";
+
+        private static string AaEmail => "AppAdmin.QnSTranslator@gmx.at";
+
+        private static string AaPwd => "App2189!Admin";
+
+        private static string AaRole => "AppAdmin";
+
+        private static bool AaEnableJwt => true;
+
+        private static string AuUser => "AppUser";
+
+        private static string AuEmail => "AppUser.QnSTranslator@gmx.at";
+
+        private static string AuPwd => "App2189!User";
+
+        private static string AuRole => "AppUser";
+
+        private static bool AuEnableJwt => true;
+
+        private static async Task Main(string[] args)
         {
             await Task.Run(() => Console.WriteLine("QnSTranslator"));
 
@@ -67,17 +78,17 @@ namespace QnSTranslator.ConApp
             using var ctrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>(login.SessionToken);
             var entity = await ctrl.CreateAsync();
 
-            entity.FirstItem.Name = user;
-            entity.FirstItem.Email = email;
-            entity.FirstItem.Password = pwd;
-            entity.FirstItem.EnableJwtAuth = enableJwtAuth;
+            entity.OneItem.Name = user;
+            entity.OneItem.Email = email;
+            entity.OneItem.Password = pwd;
+            entity.OneItem.EnableJwtAuth = enableJwtAuth;
 
             foreach (var item in roles)
             {
-                var role = entity.CreateSecondItem();
+                var role = entity.CreateManyItem();
 
                 role.Designation = item;
-                entity.AddSecondItem(role);
+                entity.AddManyItem(role);
             }
             await ctrl.InsertAsync(entity);
             await accMngr.LogoutAsync(login.SessionToken);

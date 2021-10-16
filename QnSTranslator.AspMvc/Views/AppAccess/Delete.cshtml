@@ -42,7 +42,7 @@
         <h3>@translate("Are you sure you want to delete this?")</h3>
     }
     <div style="margin-top: 1em;">
-        @await Html.PartialAsync("_IdentityDetails", Model.FirstItem)
+        @await Html.PartialAsync("_IdentityDetails", Model.OneItem)
     </div>
 
     @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = "Delete", SubmitCss = "btn btn-danger" })
@@ -50,7 +50,7 @@
 
 <div style="margin-top: 1em;">
     <h4>Rolen</h4>
-    @await Html.PartialAsync("_RoleListDetails", Model.SecondItems)
+    @await Html.PartialAsync("_RoleListDetails", Model.ManyItems)
 </div>
 @*Begin:Footer*@
 @{

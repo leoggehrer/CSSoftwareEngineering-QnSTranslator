@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace QnSTranslator.Logic.Entities.Persistence.Account
 {
-    partial class LoginSession
+    internal partial class LoginSession
     {
         #region Identity members
         partial void OnNameReading()

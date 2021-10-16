@@ -74,27 +74,34 @@ namespace QnSTranslator.Logic.DataContext.Db
 		}
 		partial void DoModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Entities.Persistence.Language.Translation>().ToTable(nameof(Entities.Persistence.Language.Translation), nameof(Entities.Persistence.Language)).HasKey(nameof(Entities.Persistence.Language.Translation.Id));
+			var translationBuilder = modelBuilder.Entity<Entities.Persistence.Language.Translation>();
+			translationBuilder.ToTable("Translation", "Language").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Language.Translation>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Language.Translation>());
-			modelBuilder.Entity<Entities.Persistence.Account.ActionLog>().ToTable(nameof(Entities.Persistence.Account.ActionLog), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.ActionLog.Id));
+			ConfigureEntityType(translationBuilder);
+			var actionLogBuilder = modelBuilder.Entity<Entities.Persistence.Account.ActionLog>();
+			actionLogBuilder.ToTable("ActionLog", "Account").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Account.ActionLog>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.ActionLog>());
-			modelBuilder.Entity<Entities.Persistence.Account.Identity>().ToTable(nameof(Entities.Persistence.Account.Identity), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Identity.Id));
+			ConfigureEntityType(actionLogBuilder);
+			var identityBuilder = modelBuilder.Entity<Entities.Persistence.Account.Identity>();
+			identityBuilder.ToTable("Identity", "Account").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Account.Identity>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Identity>());
-			modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>().ToTable(nameof(Entities.Persistence.Account.IdentityXRole), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.IdentityXRole.Id));
+			ConfigureEntityType(identityBuilder);
+			var identityXRoleBuilder = modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>();
+			identityXRoleBuilder.ToTable("IdentityXRole", "Account").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>());
-			modelBuilder.Entity<Entities.Persistence.Account.LoginSession>().ToTable(nameof(Entities.Persistence.Account.LoginSession), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.LoginSession.Id));
+			ConfigureEntityType(identityXRoleBuilder);
+			var loginSessionBuilder = modelBuilder.Entity<Entities.Persistence.Account.LoginSession>();
+			loginSessionBuilder.ToTable("LoginSession", "Account").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Account.LoginSession>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.LoginSession>());
-			modelBuilder.Entity<Entities.Persistence.Account.Role>().ToTable(nameof(Entities.Persistence.Account.Role), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Role.Id));
+			ConfigureEntityType(loginSessionBuilder);
+			var roleBuilder = modelBuilder.Entity<Entities.Persistence.Account.Role>();
+			roleBuilder.ToTable("Role", "Account").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Account.Role>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Role>());
-			modelBuilder.Entity<Entities.Persistence.Account.User>().ToTable(nameof(Entities.Persistence.Account.User), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.User.Id));
+			ConfigureEntityType(roleBuilder);
+			var userBuilder = modelBuilder.Entity<Entities.Persistence.Account.User>();
+			userBuilder.ToTable("User", "Account").HasKey("Id");
 			modelBuilder.Entity<Entities.Persistence.Account.User>().Property(p => p.RowVersion).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.User>());
+			ConfigureEntityType(userBuilder);
 		}
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Language.Translation> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.ActionLog> entityTypeBuilder);

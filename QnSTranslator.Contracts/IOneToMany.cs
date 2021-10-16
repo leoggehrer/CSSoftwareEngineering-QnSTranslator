@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace QnSTranslator.Contracts
 {
-    public partial interface IOneToMany<TFirst, TSecond> : IIdentifiable
-        where TFirst : IIdentifiable
-        where TSecond : IIdentifiable
+    public partial interface IOneToMany<TOne, TMany> : IIdentifiable
+        where TOne : IIdentifiable
+        where TMany : IIdentifiable
     {
-        TFirst FirstItem { get; }
-        IEnumerable<TSecond> SecondItems { get; }
+        TOne OneItem { get; }
+        IEnumerable<TMany> ManyItems { get; }
 
-        void ClearSecondItems();
-        TSecond CreateSecondItem();
-        void AddSecondItem(TSecond secondItem);
-        void RemoveSecondItem(TSecond secondItem);
+        void ClearManyItems();
+        TMany CreateManyItem();
+        void AddManyItem(TMany manyItem);
+        void RemoveManyItem(TMany manyItem);
     }
 }
 //MdEnd

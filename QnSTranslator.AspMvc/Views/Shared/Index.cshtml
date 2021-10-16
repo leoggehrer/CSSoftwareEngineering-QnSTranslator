@@ -31,7 +31,7 @@
     <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
 </p>
 
-<table class="table">
+<table class="table table-hover">
     <thead>
         @await Html.PartialAsync("_TableHead", Model, ViewData)
     </thead>

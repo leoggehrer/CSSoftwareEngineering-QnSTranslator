@@ -1,6 +1,5 @@
 //@QnSCodeCopy
 //MdStart
-using System;
 
 namespace QnSTranslator.AspMvc.Models
 {

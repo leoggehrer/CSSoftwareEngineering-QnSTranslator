@@ -9,7 +9,7 @@ using System.Linq.Dynamic.Core;
 
 namespace QnSTranslator.Logic.DataContext.Db
 {
-    abstract partial class GenericDbContext : DbContext, IContext
+    internal abstract partial class GenericDbContext : DbContext, IContext
     {
         static GenericDbContext()
         {

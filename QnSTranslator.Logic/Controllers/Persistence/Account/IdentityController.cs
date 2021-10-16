@@ -8,7 +8,7 @@ using QnSTranslator.Logic.Modules.Account;
 
 namespace QnSTranslator.Logic.Controllers.Persistence.Account
 {
-    partial class IdentityController
+    internal partial class IdentityController
     {
         private void CheckInsertEntity(Identity entity)
         {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class ControllerGenerator
+    internal partial class ControllerGenerator
     {
         partial void CreateLogicControllerAttributes(Type type, List<string> codeLines)
         {

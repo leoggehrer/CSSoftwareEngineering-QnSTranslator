@@ -5,7 +5,7 @@ using QnSTranslator.Logic.Entities.Persistence.Language;
 
 namespace QnSTranslator.Logic.Controllers.Persistence.Language
 {
-    partial class TranslationController
+    internal partial class TranslationController
     {
         public override Task<int> CountAsync()
         {

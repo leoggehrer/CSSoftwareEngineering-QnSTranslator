@@ -45,22 +45,22 @@
     <thead>
         <tr>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.FirstItem.Name))
+                @translateFor(Html.DisplayNameFor(model => model.OneItem.Name))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.FirstItem.Email))
+                @translateFor(Html.DisplayNameFor(model => model.OneItem.Email))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.FirstItem.EnableJwtAuth))
+                @translateFor(Html.DisplayNameFor(model => model.OneItem.EnableJwtAuth))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.SecondItems))
+                @translateFor(Html.DisplayNameFor(model => model.ManyItems))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.FirstItem.AccessFailedCount))
+                @translateFor(Html.DisplayNameFor(model => model.OneItem.AccessFailedCount))
             </th>
             <th>
-                @translateFor(Html.DisplayNameFor(model => model.FirstItem.State))
+                @translateFor(Html.DisplayNameFor(model => model.OneItem.State))
             </th>
             <th></th>
         </tr>
@@ -70,27 +70,27 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstItem.Name)
+                    @Html.DisplayFor(modelItem => item.OneItem.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstItem.Email)
+                    @Html.DisplayFor(modelItem => item.OneItem.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstItem.EnableJwtAuth)
+                    @Html.DisplayFor(modelItem => item.OneItem.EnableJwtAuth)
                 </td>
                 <td>
                     <ul>
-                        @foreach (var role in item.SecondItems)
+                        @foreach (var role in item.ManyItems)
                         {
                             <li>@role.Designation</li>
                         }
                     </ul>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstItem.AccessFailedCount)
+                    @Html.DisplayFor(modelItem => item.OneItem.AccessFailedCount)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstItem.State)
+                    @Html.DisplayFor(modelItem => item.OneItem.State)
                 </td>
                 <td>
                     @Html.ActionLink(translateFor("Edit"), "Edit", new { id = item.Id }) |

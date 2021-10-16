@@ -1,6 +1,5 @@
 //@QnSCodeCopy
 //MdStart
-using QnSTranslator.Contracts.Modules.Common;
 
 namespace QnSTranslator.Contracts.Persistence.Account
 {

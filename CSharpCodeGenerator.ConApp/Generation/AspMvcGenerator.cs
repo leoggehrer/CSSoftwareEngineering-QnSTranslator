@@ -7,7 +7,7 @@ using CommonBase.Extensions;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class AspMvcGenerator : ClassGenerator
+    internal partial class AspMvcGenerator : ClassGenerator
     {
         protected AspMvcGenerator(SolutionProperties solutionProperties)
             : base(solutionProperties)

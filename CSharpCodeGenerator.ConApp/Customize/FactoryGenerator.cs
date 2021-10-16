@@ -4,7 +4,7 @@ using System;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class FactoryGenerator
+    internal partial class FactoryGenerator
     {
         partial void CanCreateLogicAccess(Type type, ref bool create)
         {
@@ -13,6 +13,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 || type.FullName.EndsWith(".Persistence.Account.IIdentityXRole")
                 || type.FullName.EndsWith(".Persistence.Account.ILoginSession")
                 )
+            {
+                create = false;
+            }
+            else if (type.Name.Equals("IInvoice"))
+            {
+                create = false;
+            }
+            else if (type.Name.Equals("IInvoiceDetail"))
             {
                 create = false;
             }

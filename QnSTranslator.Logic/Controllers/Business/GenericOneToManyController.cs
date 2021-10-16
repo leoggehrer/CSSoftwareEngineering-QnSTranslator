@@ -11,7 +11,7 @@ using QnSTranslator.Logic.Exceptions;
 
 namespace QnSTranslator.Logic.Controllers.Business
 {
-    abstract partial class GenericOneToManyController<I, E, TFirst, TFirstEntity, TSecond, TSecondEntity> : ControllerObject, Contracts.Client.IControllerAccess<I>
+    internal abstract partial class GenericOneToManyController<I, E, TFirst, TFirstEntity, TSecond, TSecondEntity> : ControllerObject, Contracts.Client.IControllerAccess<I>
 		where I : Contracts.IOneToMany<TFirst, TSecond>
 		where E : Entities.OneToManyObject<TFirst, TFirstEntity, TSecond, TSecondEntity>, I, Contracts.ICopyable<I>, new()
 		where TFirst : Contracts.IIdentifiable, Contracts.ICopyable<TFirst>
@@ -27,16 +27,14 @@ namespace QnSTranslator.Logic.Controllers.Business
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
 
-		protected GenericController<TFirst, TFirstEntity> OneEntityController { get; private set; }
-		protected GenericController<TSecond, TSecondEntity> ManyEntityController { get; private set; }
+		protected abstract GenericController<TFirst, TFirstEntity> OneEntityController { get; set; }
+		protected abstract GenericController<TSecond, TSecondEntity> ManyEntityController { get; set; }
 
 		public virtual int MaxPageSize => OneEntityController.MaxPageSize;
 
 		public GenericOneToManyController(DataContext.IContext context) : base(context)
 		{
 			Constructing();
-			OneEntityController = CreateFirstEntityController(this);
-			ManyEntityController = CreateSecondEntityController(this);
 			ChangedSessionToken += GenericOneToManyController_ChangedSessionToken;
 			Constructed();
 		}
@@ -45,8 +43,6 @@ namespace QnSTranslator.Logic.Controllers.Business
 		public GenericOneToManyController(ControllerObject controller) : base(controller)
 		{
 			Constructing();
-			OneEntityController = CreateFirstEntityController(this);
-			ManyEntityController = CreateSecondEntityController(this);
 			ChangedSessionToken += GenericOneToManyController_ChangedSessionToken;
 			Constructed();
 		}
@@ -56,9 +52,6 @@ namespace QnSTranslator.Logic.Controllers.Business
 			OneEntityController.SessionToken = SessionToken;
 			ManyEntityController.SessionToken = SessionToken;
 		}
-
-		protected abstract GenericController<TFirst, TFirstEntity> CreateFirstEntityController(ControllerObject controller);
-		protected abstract GenericController<TSecond, TSecondEntity> CreateSecondEntityController(ControllerObject controller);
 
 		protected E ConvertTo(I contract)
 		{
@@ -103,10 +96,10 @@ namespace QnSTranslator.Logic.Controllers.Business
 		{
 			var predicate = $"{typeof(TFirstEntity).Name}Id == {masterId}";
 
-			entity.ClearSecondItems();
+			entity.ClearManyItems();
 			foreach (var item in (await ManyEntityController.QueryAllAsync(predicate).ConfigureAwait(false)).ToList())
 			{
-				entity.AddSecondItem(item);
+				entity.AddManyItem(item);
 			}
 		}
 		protected virtual async Task<IEnumerable<TSecondEntity>> QueryDetailsAsync(int masterId)
@@ -131,7 +124,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 			if (firstEntity != null)
 			{
 				result = new E();
-				result.FirstItem.CopyProperties(firstEntity);
+				result.OneItem.CopyProperties(firstEntity);
 				await LoadDetailsAsync(result, firstEntity.Id).ConfigureAwait(false);
 			}
 			else
@@ -150,7 +143,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 				{
 					E entity = new E();
 
-					entity.FirstItem.CopyProperties(item);
+					entity.OneItem.CopyProperties(item);
 					await LoadDetailsAsync(entity, item.Id).ConfigureAwait(false);
 
 					result.Add(entity);
@@ -168,7 +161,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 				{
 					E entity = new E();
 
-					entity.FirstItem.CopyProperties(item);
+					entity.OneItem.CopyProperties(item);
 					await LoadDetailsAsync(entity, item.Id).ConfigureAwait(false);
 
 					result.Add(entity);
@@ -187,7 +180,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 				{
 					E entity = new E();
 
-					entity.FirstItem.CopyProperties(item);
+					entity.OneItem.CopyProperties(item);
 					await LoadDetailsAsync(entity, item.Id).ConfigureAwait(false);
 
 					result.Add(entity);
@@ -205,7 +198,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 				{
 					E entity = new E();
 
-					entity.FirstItem.CopyProperties(item);
+					entity.OneItem.CopyProperties(item);
 					await LoadDetailsAsync(entity, item.Id).ConfigureAwait(false);
 
 					result.Add(entity);
@@ -222,15 +215,15 @@ namespace QnSTranslator.Logic.Controllers.Business
 		public virtual async Task<I> InsertAsync(I entity)
 		{
 			entity.CheckArgument(nameof(entity));
-			entity.FirstItem.CheckArgument(nameof(entity.FirstItem));
-			entity.SecondItems.CheckArgument(nameof(entity.SecondItems));
+			entity.OneItem.CheckArgument(nameof(entity.OneItem));
+			entity.ManyItems.CheckArgument(nameof(entity.ManyItems));
 
 			var result = new E();
 
-			result.FirstEntity.CopyProperties(entity.FirstItem);
+			result.FirstEntity.CopyProperties(entity.OneItem);
 			await OneEntityController.InsertAsync(result.FirstEntity).ConfigureAwait(false);
 
-			foreach (var item in entity.SecondItems)
+			foreach (var item in entity.ManyItems)
 			{
 				var secondEntity = new TSecondEntity();
 
@@ -243,7 +236,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 					pi.SetValue(secondEntity, result.FirstEntity);
 				}
 				await ManyEntityController.InsertAsync(secondEntity).ConfigureAwait(false);
-				result.AddSecondItem(secondEntity);
+				result.AddManyItem(secondEntity);
 			}
 			return result;
 		}
@@ -251,13 +244,13 @@ namespace QnSTranslator.Logic.Controllers.Business
 		public virtual async Task<I> UpdateAsync(I entity)
 		{
 			entity.CheckArgument(nameof(entity));
-			entity.FirstItem.CheckArgument(nameof(entity.FirstItem));
-			entity.SecondItems.CheckArgument(nameof(entity.SecondItems));
+			entity.OneItem.CheckArgument(nameof(entity.OneItem));
+			entity.ManyItems.CheckArgument(nameof(entity.ManyItems));
 
 			//Delete all costs that are no longer included in the list.
 			foreach (var item in (await QueryDetailsAsync(entity.Id).ConfigureAwait(false)).ToList())
 			{
-				var exitsItem = entity.SecondItems.SingleOrDefault(i => i.Id == item.Id);
+				var exitsItem = entity.ManyItems.SingleOrDefault(i => i.Id == item.Id);
 
 				if (exitsItem == null)
 				{
@@ -266,10 +259,10 @@ namespace QnSTranslator.Logic.Controllers.Business
 			}
 
 			var result = new E();
-			var firstEntity = await OneEntityController.UpdateAsync(entity.FirstItem).ConfigureAwait(false);
+			var firstEntity = await OneEntityController.UpdateAsync(entity.OneItem).ConfigureAwait(false);
 
-			result.FirstItem.CopyProperties(firstEntity);
-			foreach (var item in entity.SecondItems)
+			result.OneItem.CopyProperties(firstEntity);
+			foreach (var item in entity.ManyItems)
 			{
 				if (item.Id == 0)
 				{
@@ -299,7 +292,7 @@ namespace QnSTranslator.Logic.Controllers.Business
 
 			if (entity != null)
 			{
-				foreach (var item in entity.SecondItems)
+				foreach (var item in entity.ManyItems)
 				{
 					await ManyEntityController.DeleteAsync(item.Id).ConfigureAwait(false);
 				}

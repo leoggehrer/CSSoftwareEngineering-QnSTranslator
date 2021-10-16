@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CommonBase.Extensions;
+using CSharpCodeGenerator.ConApp.Helpers;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class ClassGenerator : Generator
+    internal partial class ClassGenerator : Generator
     {
         protected ClassGenerator(SolutionProperties solutionProperties)
             : base(solutionProperties)
@@ -181,10 +182,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
             propertyInfo.CheckArgument(nameof(propertyInfo));
 
             var result = new List<string>();
-            var defaultValue = string.Empty;
-            var fieldType = Generator.GetPropertyType(propertyInfo);
-            var fieldName = CreateFieldName(propertyInfo, "_");
-            var paramName = CreateFieldName(propertyInfo, "_");
+            var contractPropertyHelper = new ContractPropertyHelper(propertyInfo);
+            var defaultValue = contractPropertyHelper.DefaultValue;
+            var fieldType = contractPropertyHelper.PropertyFieldType;
+            var fieldName = contractPropertyHelper.PropertyFieldName;
+            var paramName = contractPropertyHelper.PropertyFieldName;
 
             result.Add(string.Empty);
             SetPropertyAttributes(propertyInfo.DeclaringType, propertyInfo, result);
@@ -366,16 +368,16 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 {
                     result.Add($"{SecondItemName}.CopyProperties(other.{SecondItemName});");
                 }
-                else if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToManyName))
+                else if (item.Name.Equals(OneItemName) && item.DeclaringType.Name.Equals(IOneToManyName))
                 {
-                    result.Add($"{FirstItemName}.CopyProperties(other.{FirstItemName});");
+                    result.Add($"{OneItemName}.CopyProperties(other.{OneItemName});");
                 }
-                else if (item.Name.Equals(SecondItemsName) && item.DeclaringType.Name.Equals(IOneToManyName))
+                else if (item.Name.Equals(ManyItemsName) && item.DeclaringType.Name.Equals(IOneToManyName))
                 {
-                    result.Add($"Clear{SecondItemsName}();");
-                    result.Add($"foreach (var item in other.{SecondItemsName})");
+                    result.Add($"Clear{ManyItemsName}();");
+                    result.Add($"foreach (var item in other.{ManyItemsName})");
                     result.Add("{");
-                    result.Add("AddSecondItem(item);");
+                    result.Add($"Add{ManyItemName}(item);");
                     result.Add("}");
                 }
                 else if (item.CanRead)

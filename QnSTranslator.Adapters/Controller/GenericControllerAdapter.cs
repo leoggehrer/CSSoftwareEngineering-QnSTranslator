@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QnSTranslator.Adapters.Controller
 {
-    partial class GenericControllerAdapter<TContract> : Contracts.Client.IAdapterAccess<TContract>
+    internal partial class GenericControllerAdapter<TContract> : Contracts.Client.IAdapterAccess<TContract>
         where TContract : Contracts.IIdentifiable
     {
         static GenericControllerAdapter()

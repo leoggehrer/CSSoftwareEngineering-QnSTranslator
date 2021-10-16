@@ -42,6 +42,11 @@ namespace CommonBase.Extensions
             return splitSource.Skip(1).Select(d => mapper(d, header));
         }
 
+        public static string GetValue(this string source, string defaultValue)
+        {
+            return string.IsNullOrEmpty(source) ? defaultValue : source;
+        }
+
         public static string Separator { get; set; } = ";";
         public static string NullText { get; set; } = "<NULL>";
         private static Regex Trimmer { get; } = new Regex(@"\s\s+");

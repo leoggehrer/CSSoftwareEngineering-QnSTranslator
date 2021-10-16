@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QnSTranslator.AspMvc.Models
 {
-	public partial class IdentityModel : ModelObject, Contracts.IIdentifiable
+    public partial class IdentityModel : ModelObject, Contracts.IIdentifiable
     {
 		private System.Int32 _id;
 		public virtual System.Int32 Id

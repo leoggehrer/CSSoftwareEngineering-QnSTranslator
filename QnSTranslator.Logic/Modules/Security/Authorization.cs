@@ -153,7 +153,7 @@ namespace QnSTranslator.Logic.Modules.Security
         static partial void BeforeCheckAuthorization(string sessionToken, Type instanceType, MethodBase methodeBase, ref bool handled);
         static partial void AfterCheckAuthorization(string sessionToken, Type instanceType, MethodBase methodeBase);
 
-        static Task LoggingAsync(int identityId, string subject, string action, string info)
+        private static Task LoggingAsync(int identityId, string subject, string action, string info)
         {
             return Task.Run(async () =>
             {

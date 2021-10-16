@@ -29,11 +29,11 @@ namespace QnSTranslator.Logic.Entities.Business.Account
 			{
 				Id = other.Id;
 				RowVersion = other.RowVersion;
-				FirstItem.CopyProperties(other.FirstItem);
-				ClearSecondItems();
-				foreach (var item in other.SecondItems)
+				OneItem.CopyProperties(other.OneItem);
+				ClearManyItems();
+				foreach (var item in other.ManyItems)
 				{
-					AddSecondItem(item);
+					AddManyItem(item);
 				}
 			}
 			AfterCopyProperties(other);
@@ -54,11 +54,11 @@ namespace QnSTranslator.Logic.Entities.Business.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItems, other.SecondItems);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(OneItem, other.OneItem) && IsEqualsWith(ManyItems, other.ManyItems);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, RowVersion, FirstItem, SecondItems);
+			return HashCode.Combine(Id, RowVersion, OneItem, ManyItems);
 		}
 	}
 }

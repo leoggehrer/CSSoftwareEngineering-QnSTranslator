@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace QnSTranslator.Logic.Controllers.Business
 {
-    abstract partial class BusinessControllerAdapter<I, E> : ControllerObject, Contracts.Client.IControllerAccess<I>
+    internal abstract partial class BusinessControllerAdapter<I, E> : ControllerObject, Contracts.Client.IControllerAccess<I>
 		where I : Contracts.IIdentifiable
 		where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
 	{

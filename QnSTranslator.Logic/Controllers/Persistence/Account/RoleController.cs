@@ -8,7 +8,7 @@ using QnSTranslator.Logic.Entities.Persistence.Account;
 
 namespace QnSTranslator.Logic.Controllers.Persistence.Account
 {
-    partial class RoleController
+    internal partial class RoleController
     {
         protected override Task BeforeInsertingUpdateingAsync(Role entiy)
         {

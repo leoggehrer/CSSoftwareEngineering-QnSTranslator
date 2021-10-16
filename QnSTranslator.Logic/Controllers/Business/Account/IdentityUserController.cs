@@ -5,7 +5,7 @@ using QnSTranslator.Contracts.Business.Account;
 
 namespace QnSTranslator.Logic.Controllers.Business.Account
 {
-    partial class IdentityUserController
+    internal partial class IdentityUserController
     {
         public override async Task<IIdentityUser> CreateAsync()
         {

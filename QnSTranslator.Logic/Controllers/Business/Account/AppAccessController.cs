@@ -8,11 +8,10 @@ using QnSTranslator.Contracts.Business.Account;
 using QnSTranslator.Logic.Controllers.Persistence.Account;
 using QnSTranslator.Logic.Entities.Business.Account;
 using QnSTranslator.Logic.Entities.Persistence.Account;
-using QnSTranslator.Logic.Modules.Account;
 
 namespace QnSTranslator.Logic.Controllers.Business.Account
 {
-    partial class AppAccessController
+    internal partial class AppAccessController
     {
         private IdentityXRoleController IdentityXRoleController { get; set; }
 
@@ -29,14 +28,14 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
 
         protected override async Task LoadDetailsAsync(AppAccess entity, int masterId)
         {
-            entity.ClearSecondItems();
+            entity.ClearManyItems();
             foreach (var item in IdentityXRoleController.ExecuteQuery(p => p.IdentityId == masterId).ToList())
             {
                 var role = await ManyEntityController.GetByIdAsync(item.RoleId).ConfigureAwait(false);
 
                 if (role != null)
                 {
-                    entity.AddSecondItem(role);
+                    entity.AddManyItem(role);
                 }
             }
         }
@@ -44,15 +43,15 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
         public override async Task<IAppAccess> InsertAsync(IAppAccess entity)
         {
             entity.CheckArgument(nameof(entity));
-            entity.FirstItem.CheckArgument(nameof(entity.FirstItem));
-            entity.SecondItems.CheckArgument(nameof(entity.SecondItems));
+            entity.OneItem.CheckArgument(nameof(entity.OneItem));
+            entity.ManyItems.CheckArgument(nameof(entity.ManyItems));
 
             var result = new AppAccess();
 
-            result.FirstEntity.CopyProperties(entity.FirstItem);
+            result.FirstEntity.CopyProperties(entity.OneItem);
             await OneEntityController.InsertAsync(result.FirstEntity).ConfigureAwait(false);
 
-            foreach (var item in entity.SecondItems)
+            foreach (var item in entity.ManyItems)
             {
                 var role = new Role();
                 var joinRole = new IdentityXRole();
@@ -87,17 +86,17 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
                     joinRole.RoleId = role.Id;
                 }
                 await IdentityXRoleController.InsertAsync(joinRole).ConfigureAwait(false);
-                result.AddSecondItem(role);
+                result.AddManyItem(role);
             }
             return result;
         }
         public override async Task<IAppAccess> UpdateAsync(IAppAccess entity)
         {
             entity.CheckArgument(nameof(entity));
-            entity.FirstItem.CheckArgument(nameof(entity.FirstItem));
-            entity.SecondItems.CheckArgument(nameof(entity.SecondItems));
+            entity.OneItem.CheckArgument(nameof(entity.OneItem));
+            entity.ManyItems.CheckArgument(nameof(entity.ManyItems));
 
-            var accessRoles = entity.SecondItems.Select(i =>
+            var accessRoles = entity.ManyItems.Select(i =>
             {
                 var entity = new Role();
 
@@ -128,9 +127,9 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
             }
 
             var result = new AppAccess();
-            var firstEntity = await OneEntityController.UpdateAsync(entity.FirstItem).ConfigureAwait(false);
+            var firstEntity = await OneEntityController.UpdateAsync(entity.OneItem).ConfigureAwait(false);
 
-            result.FirstItem.CopyProperties(firstEntity);
+            result.OneItem.CopyProperties(firstEntity);
             foreach (var accessRole in accessRoles)
             {
                 var role = new Role();
@@ -160,7 +159,7 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
                 {
                     await IdentityXRoleController.InsertAsync(joinRole).ConfigureAwait(false);
                 }
-                result.AddSecondItem(role);
+                result.AddManyItem(role);
             }
             return result;
         }

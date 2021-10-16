@@ -7,49 +7,49 @@ using CommonBase.Extensions;
 
 namespace QnSTranslator.Transfer
 {
-    public abstract partial class OneToManyModel<TFirst, TFirstModel, TSecond, TSecondModel> : IdentityModel
-        where TFirst : Contracts.IIdentifiable
-        where TSecond : Contracts.IIdentifiable
-        where TFirstModel : IdentityModel, Contracts.ICopyable<TFirst>, TFirst, new()
-        where TSecondModel : IdentityModel, Contracts.ICopyable<TSecond>, TSecond, new()
+    public abstract partial class OneToManyModel<TOne, TOneModel, TMany, TManyModel> : IdentityModel
+        where TOne : Contracts.IIdentifiable
+        where TMany : Contracts.IIdentifiable
+        where TOneModel : IdentityModel, Contracts.ICopyable<TOne>, TOne, new()
+        where TManyModel : IdentityModel, Contracts.ICopyable<TMany>, TMany, new()
     {
-        public virtual TFirstModel FirstModel { get; set; } = new TFirstModel();
+        public virtual TOneModel FirstModel { get; set; } = new TOneModel();
         [JsonIgnore]
-        public virtual TFirst FirstItem => FirstModel;
+        public virtual TOne OneItem => FirstModel;
 
-        public virtual List<TSecondModel> SecondModels { get; set; } = new List<TSecondModel>();
+        public virtual List<TManyModel> ManyModels { get; set; } = new List<TManyModel>();
         [JsonIgnore]
-        public virtual IEnumerable<TSecond> SecondItems => SecondModels as IEnumerable<TSecond>;
+        public virtual IEnumerable<TMany> ManyItems => ManyModels as IEnumerable<TMany>;
 
         public override int Id { get => FirstModel.Id; set => FirstModel.Id = value; }
         public override byte[] RowVersion { get => FirstModel.RowVersion; set => FirstModel.RowVersion = value; }
 
-        public virtual void ClearSecondItems()
+        public virtual void ClearManyItems()
         {
-            SecondModels.Clear();
+            ManyModels.Clear();
         }
-        public virtual TSecond CreateSecondItem()
+        public virtual TMany CreateManyItem()
         {
-            return new TSecondModel();
+            return new TManyModel();
         }
-        public virtual void AddSecondItem(TSecond secondItem)
+        public virtual void AddManyItem(TMany secondItem)
         {
             secondItem.CheckArgument(nameof(secondItem));
 
-            var newDetail = new TSecondModel();
+            var newDetail = new TManyModel();
 
             newDetail.CopyProperties(secondItem);
-            SecondModels.Add(newDetail);
+            ManyModels.Add(newDetail);
         }
-        public virtual void RemoveSecondItem(TSecond secondItem)
+        public virtual void RemoveManyItem(TMany secondItem)
         {
             secondItem.CheckArgument(nameof(secondItem));
 
-            var removeDetail = SecondModels.FirstOrDefault(i => i.Id == secondItem.Id);
+            var removeDetail = ManyModels.FirstOrDefault(i => i.Id == secondItem.Id);
 
             if (removeDetail != null)
             {
-                SecondModels.Remove(removeDetail);
+                ManyModels.Remove(removeDetail);
             }
         }
     }

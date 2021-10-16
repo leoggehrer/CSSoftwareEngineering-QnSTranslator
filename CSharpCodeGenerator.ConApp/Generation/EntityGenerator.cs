@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommonBase.Extensions;
+using CSharpCodeGenerator.ConApp.Helpers;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class EntityGenerator : ClassGenerator
+    internal partial class EntityGenerator : ClassGenerator
     {
         protected EntityGenerator(SolutionProperties solutionProperties)
             : base(solutionProperties)
@@ -45,34 +46,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
         partial void CanCreateProperty(Type type, string propertyName, ref bool create);
         partial void CreateEntityAttributes(Type type, List<string> codeLines);
 
-        public IEnumerable<string> CreateModulesEntities()
-        {
-            List<string> result = new List<string>();
-            ContractsProject contractsProject = ContractsProject.Create(SolutionProperties);
-
-            foreach (var type in contractsProject.ModuleTypes)
-            {
-                if (CanCreateEntity(type))
-                {
-                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
-                    result.AddRange(EnvelopeWithANamespace(CreateModuleEntity(type), CreateNameSpace(type)));
-                }
-            }
-            return result;
-        }
-        private static IEnumerable<string> CreateModuleEntity(Type type)
-        {
-            type.CheckArgument(nameof(type));
-
-            var result = new List<string>
-            {
-                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}",
-                "{",
-                "}"
-            };
-            return result;
-        }
-
         public IEnumerable<string> CreateBusinessEntities()
         {
             List<string> result = new List<string>();
@@ -82,7 +55,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 if (CanCreateEntity(type))
                 {
-                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
+                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromContract(type), CreateNameSpace(type), "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreateBusinessEntity(type), CreateNameSpace(type)));
                 }
             }
@@ -94,7 +67,35 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             var result = new List<string>
             {
-                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}",
+                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByContract(type)}",
+                "{",
+                "}"
+            };
+            return result;
+        }
+
+        public IEnumerable<string> CreateModulesEntities()
+        {
+            List<string> result = new List<string>();
+            ContractsProject contractsProject = ContractsProject.Create(SolutionProperties);
+
+            foreach (var type in contractsProject.ModuleTypes)
+            {
+                if (CanCreateEntity(type))
+                {
+                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromContract(type), CreateNameSpace(type), "using System;"));
+                    result.AddRange(EnvelopeWithANamespace(CreateModuleEntity(type), CreateNameSpace(type)));
+                }
+            }
+            return result;
+        }
+        private static IEnumerable<string> CreateModuleEntity(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByContract(type)}",
                 "{",
                 "}"
             };
@@ -114,7 +115,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     string nameSpace = CreateNameSpace(type);
 
                     result.Add($"//Entity for: {type.Name}");
-                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), nameSpace, "using System;"));
+                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromContract(type), nameSpace, "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreatePersistenceEntity(type), nameSpace));
                     result.AddRange(EnvelopeWithANamespace(CreateEntityToEntityFromContracts(type, persistenceTypes, null), nameSpace));
                 }
@@ -127,27 +128,26 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             var result = new List<string>
             {
-                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}",
+                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByContract(type)}",
                 "{",
                 "}"
             };
             return result;
         }
 
-        private IEnumerable<string> CreateEntityFromInterface(Type type)
+        private IEnumerable<string> CreateEntityFromContract(Type type)
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-            var baseItfcs = GetBaseInterfaces(type).ToArray();
-            var entityName = CreateEntityNameFromInterface(type);
-            var properties = GetAllInterfaceProperties(type, baseItfcs);
+            var result = new List<string>();
+            var contractHelper = new ContractHelper(type);
+            var properties = contractHelper.Properties;
 
             CreateEntityAttributes(type, result);
-            result.Add($"partial class {entityName} : {type.FullName}");
+            result.Add($"partial class {contractHelper.EntityName} : {type.FullName}");
             result.Add("{");
-            result.AddRange(CreatePartialStaticConstrutor(entityName));
-            result.AddRange(CreatePartialConstrutor("public", entityName));
+            result.AddRange(CreatePartialStaticConstrutor(contractHelper.EntityName));
+            result.AddRange(CreatePartialConstrutor("public", contractHelper.EntityName));
             foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
                                                     && p.DeclaringType.Name.Equals(IOneToOneName) == false
                                                     && p.DeclaringType.Name.Equals(IOneToManyName) == false
@@ -161,7 +161,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("}");
             return result;
         }
-        private static string GetBaseClassByInterface(Type type)
+        private static string GetBaseClassByContract(Type type)
         {
             type.CheckArgument(nameof(type));
 
@@ -254,6 +254,18 @@ namespace CSharpCodeGenerator.ConApp.Generation
                         var propertyName = mapPropertyName != null ? mapPropertyName(otherName) : otherName;
 
                         result.Add(($"public {otherFullName} {propertyName} " + "{ get; set; }"));
+                    }
+                    else if (pi.Name.StartsWith($"{otherName}Id_"))
+                    {
+                        var data = pi.Name.Split("_");
+
+                        if (data.Length == 2)
+                        {
+                            var otherFullName = Generator.CreateEntityFullNameFromInterface(other);
+                            var propertyName = mapPropertyName != null ? mapPropertyName(otherName) : otherName;
+
+                            result.Add(($"public {otherFullName} {data[1]} " + "{ get; set; }"));
+                        }
                     }
                 }
             }

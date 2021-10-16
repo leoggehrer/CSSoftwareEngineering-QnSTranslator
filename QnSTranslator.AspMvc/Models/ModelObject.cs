@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace QnSTranslator.AspMvc.Models
 {
-	public partial class ModelObject
+    public partial class ModelObject
     {
 		[ScaffoldColumn(false)]
 		public bool HasError => string.IsNullOrEmpty(ActionError) == false;

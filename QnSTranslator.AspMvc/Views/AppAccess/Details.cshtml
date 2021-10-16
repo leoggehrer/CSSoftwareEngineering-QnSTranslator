@@ -41,12 +41,12 @@
 <hr />
 
 <div style="margin-top: 1em;">
-    @await Html.PartialAsync("_IdentityDetails", Model.FirstItem)
+    @await Html.PartialAsync("_IdentityDetails", Model.OneItem)
 </div>
 
 <div style="margin-top: 1em;">
     <h4>Rolen</h4>
-    @await Html.PartialAsync("_RoleListDetails", Model.SecondItems)
+    @await Html.PartialAsync("_RoleListDetails", Model.ManyItems)
 </div>
 
 @*Begin:Footer*@

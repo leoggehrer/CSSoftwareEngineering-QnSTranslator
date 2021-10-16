@@ -13,23 +13,23 @@ namespace QnSTranslator.Logic.Entities
         where TSecondEntity : IdentityObject, Contracts.ICopyable<TSecond>, TSecond, new()
     {
         public virtual TFirstEntity FirstEntity { get; } = new TFirstEntity();
-        public virtual TFirst FirstItem => FirstEntity;
+        public virtual TFirst OneItem => FirstEntity;
 
         public virtual List<TSecondEntity> SecondEntities { get; } = new List<TSecondEntity>();
-        public virtual IEnumerable<TSecond> SecondItems => SecondEntities as IEnumerable<TSecond>;
+        public virtual IEnumerable<TSecond> ManyItems => SecondEntities as IEnumerable<TSecond>;
 
         public override int Id { get => FirstEntity.Id; set => FirstEntity.Id = value; }
         public override byte[] RowVersion { get => FirstEntity.RowVersion; set => FirstEntity.RowVersion = value; }
 
-        public virtual void ClearSecondItems()
+        public virtual void ClearManyItems()
         {
             SecondEntities.Clear();
         }
-        public virtual TSecond CreateSecondItem()
+        public virtual TSecond CreateManyItem()
         {
             return new TSecondEntity();
         }
-        public virtual void AddSecondItem(TSecond secondItem)
+        public virtual void AddManyItem(TSecond secondItem)
         {
             secondItem.CheckArgument(nameof(secondItem));
 
@@ -38,7 +38,7 @@ namespace QnSTranslator.Logic.Entities
             newSecond.CopyProperties(secondItem);
             SecondEntities.Add(newSecond);
         }
-        public virtual void RemoveSecondItem(TSecond secondItem)
+        public virtual void RemoveManyItem(TSecond secondItem)
         {
             secondItem.CheckArgument(nameof(secondItem));
 

@@ -1,10 +1,5 @@
 //@QnSCodeCopy
 //MdStart
-using System.Collections.Generic;
-using CommonBase.Extensions;
-using QnSTranslator.AspMvc.Models.Persistence.Account;
-using QnSTranslator.Contracts.Business.Account;
-using QnSTranslator.Contracts.Persistence.Account;
 
 namespace QnSTranslator.AspMvc.Models.Business.Account
 {
@@ -17,7 +12,7 @@ namespace QnSTranslator.AspMvc.Models.Business.Account
             {
                 string result = string.Empty;
 
-                foreach (var item in SecondItems)
+                foreach (var item in ManyItems)
                 {
                     if (result.Length > 0)
                         result += RoleSeparator;
@@ -30,13 +25,13 @@ namespace QnSTranslator.AspMvc.Models.Business.Account
             {
                 var values = value != null ? value.Split(RoleSeparator) : new string[0];
 
-                ClearSecondItems();
+                ClearManyItems();
                 foreach (var item in values)
                 {
-                    var role = CreateSecondItem();
+                    var role = CreateManyItem();
 
                     role.Designation = item;
-                    AddSecondItem(role);
+                    AddManyItem(role);
                 }
             }
         }

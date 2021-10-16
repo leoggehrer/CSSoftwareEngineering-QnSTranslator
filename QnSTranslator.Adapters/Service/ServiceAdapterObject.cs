@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace QnSTranslator.Adapters.Service
 {
-    abstract partial class ServiceAdapterObject : IDisposable
+    internal abstract partial class ServiceAdapterObject : IDisposable
     {
         static ServiceAdapterObject()
         {

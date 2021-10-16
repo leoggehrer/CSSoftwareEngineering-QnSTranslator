@@ -3,7 +3,7 @@
 
 namespace QnSTranslator.Logic.Entities.Persistence.Account
 {
-    partial class Identity
+    internal partial class Identity
     {
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }

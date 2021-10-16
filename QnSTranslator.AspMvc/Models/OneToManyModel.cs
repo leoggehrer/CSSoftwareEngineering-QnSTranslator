@@ -13,23 +13,23 @@ namespace QnSTranslator.AspMvc.Models
         where TSecondModel : IdentityModel, Contracts.ICopyable<TSecond>, TSecond, new()
     {
         public virtual TFirstModel FirstModel { get; } = new TFirstModel();
-        public virtual TFirst FirstItem => FirstModel;
+        public virtual TFirst OneItem => FirstModel;
 
         public virtual List<TSecondModel> SecondEntities { get; } = new List<TSecondModel>();
-        public virtual IEnumerable<TSecond> SecondItems => SecondEntities as IEnumerable<TSecond>;
+        public virtual IEnumerable<TSecond> ManyItems => SecondEntities as IEnumerable<TSecond>;
 
         public override int Id { get => FirstModel.Id; set => FirstModel.Id = value; }
         public override byte[] RowVersion { get => FirstModel.RowVersion; set => FirstModel.RowVersion = value; }
 
-        public virtual void ClearSecondItems()
+        public virtual void ClearManyItems()
         {
             SecondEntities.Clear();
         }
-        public virtual TSecond CreateSecondItem()
+        public virtual TSecond CreateManyItem()
         {
             return new TSecondModel();
         }
-        public virtual void AddSecondItem(TSecond secondItem)
+        public virtual void AddManyItem(TSecond secondItem)
         {
             secondItem.CheckArgument(nameof(secondItem));
 
@@ -38,7 +38,7 @@ namespace QnSTranslator.AspMvc.Models
             newDetail.CopyProperties(secondItem);
             SecondEntities.Add(newDetail);
         }
-        public virtual void RemoveSecondItem(TSecond secondItem)
+        public virtual void RemoveManyItem(TSecond secondItem)
         {
             secondItem.CheckArgument(nameof(secondItem));
 

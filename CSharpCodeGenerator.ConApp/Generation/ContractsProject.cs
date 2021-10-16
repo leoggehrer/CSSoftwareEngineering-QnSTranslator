@@ -9,7 +9,7 @@ using CommonBase.Extensions;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class ContractsProject
+    internal partial class ContractsProject
     {
         private ContractsProject()
         {
@@ -28,6 +28,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
         public SolutionProperties SolutionProperties { get; private set; }
 
+        public static string ClientSubName => ".Client";
         public static string BusinessSubName => ".Business.";
         public static string ModulesSubName => ".Modules.";
         public static string PersistenceSubName => ".Persistence.";

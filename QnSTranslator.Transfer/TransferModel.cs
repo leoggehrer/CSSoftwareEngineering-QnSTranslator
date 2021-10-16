@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace QnSTranslator.Transfer
 {
-	public abstract partial class TransferModel
+    public abstract partial class TransferModel
     {
 		protected static bool IsEqualsWith(object obj1, object obj2)
 		{

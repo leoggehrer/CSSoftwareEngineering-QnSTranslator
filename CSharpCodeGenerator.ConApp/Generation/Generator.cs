@@ -9,7 +9,7 @@ using CSharpCodeGenerator.ConApp.Extensions;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class Generator
+    internal partial class Generator
     {
         static Generator()
         {
@@ -22,6 +22,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public enum InterfaceType
         {
             Unknown,
+            Client,
             Business,
             Module,
             Persistence,
@@ -46,7 +47,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string IOneToManyName => "IOneToMany`2";
         public static string FirstItemName => "FirstItem";
         public static string SecondItemName => "SecondItem";
-        public static string SecondItemsName => "SecondItems";
+        public static string OneItemName => "OneItem";
+        public static string ManyItemName => "ManyItem";
+        public static string ManyItemsName => "ManyItems";
 
         internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)
         {
@@ -101,13 +104,17 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             var result = InterfaceType.Unknown;
 
-            if (type.Namespace.Contains(ContractsProject.BusinessSubName))
-                result = InterfaceType.Business;
-            else if (type.Namespace.Contains(ContractsProject.ModulesSubName))
-                result = InterfaceType.Module;
-            else if (type.Namespace.Contains(ContractsProject.PersistenceSubName))
-                result = InterfaceType.Persistence;
-
+            if (type.IsInterface)
+            {
+                if (type.Namespace.Contains(ContractsProject.ClientSubName))
+                    result = InterfaceType.Client;
+                else if (type.Namespace.Contains(ContractsProject.BusinessSubName))
+                    result = InterfaceType.Business;
+                else if (type.Namespace.Contains(ContractsProject.ModulesSubName))
+                    result = InterfaceType.Module;
+                else if (type.Namespace.Contains(ContractsProject.PersistenceSubName))
+                    result = InterfaceType.Persistence;
+            }
             return result;
         }
         internal static bool HasIdentifiableBase(Type type)
@@ -548,7 +555,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
         }
         #endregion Property-Helpers
-
         #endregion Helpers
     }
 }

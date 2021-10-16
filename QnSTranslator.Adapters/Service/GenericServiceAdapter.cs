@@ -12,7 +12,7 @@ using QnSTranslator.Transfer.InvokeTypes;
 
 namespace QnSTranslator.Adapters.Service
 {
-    partial class GenericServiceAdapter<TContract, TModel> : ServiceAdapterObject, Contracts.Client.IAdapterAccess<TContract>
+    internal partial class GenericServiceAdapter<TContract, TModel> : ServiceAdapterObject, Contracts.Client.IAdapterAccess<TContract>
         where TContract : Contracts.IIdentifiable
         where TModel : TContract, Contracts.ICopyable<TContract>, new()
     {

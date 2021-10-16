@@ -11,7 +11,7 @@ using QnSTranslator.Logic.Exceptions;
 
 namespace QnSTranslator.Logic.Controllers.Business
 {
-    abstract partial class GenericOneToOneController<I, E, TFirst, TFirstEntity, TSecond, TSecondEntity> : ControllerObject, Contracts.Client.IControllerAccess<I>
+    internal abstract partial class GenericOneToOneController<I, E, TFirst, TFirstEntity, TSecond, TSecondEntity> : ControllerObject, Contracts.Client.IControllerAccess<I>
         where I : Contracts.IOneToOne<TFirst, TSecond>
         where E : Entities.OneToOneObject<TFirst, TFirstEntity, TSecond, TSecondEntity>, I, Contracts.ICopyable<I>, new()
         where TFirst : Contracts.IIdentifiable, Contracts.ICopyable<TFirst>
@@ -27,16 +27,14 @@ namespace QnSTranslator.Logic.Controllers.Business
         static partial void ClassConstructing();
         static partial void ClassConstructed();
 
-        protected GenericController<TFirst, TFirstEntity> FirstEntityController { get; private set; }
-        protected GenericController<TSecond, TSecondEntity> SecondEntityController { get; private set; }
+        protected abstract GenericController<TFirst, TFirstEntity> FirstEntityController { get; set; }
+        protected abstract GenericController<TSecond, TSecondEntity> SecondEntityController { get; set; }
 
         public virtual int MaxPageSize => FirstEntityController.MaxPageSize;
 
         public GenericOneToOneController(DataContext.IContext context) : base(context)
         {
             Constructing();
-            FirstEntityController = CreateFirstEntityController(this);
-            SecondEntityController = CreateSecondEntityController(this);
             ChangedSessionToken += GenericOneToOneController_ChangedSessionToken;
             Constructed();
         }
@@ -45,8 +43,6 @@ namespace QnSTranslator.Logic.Controllers.Business
         public GenericOneToOneController(ControllerObject controller) : base(controller)
         {
             Constructing();
-            FirstEntityController = CreateFirstEntityController(this);
-            SecondEntityController = CreateSecondEntityController(this);
             ChangedSessionToken += GenericOneToOneController_ChangedSessionToken;
             Constructed();
         }
@@ -56,9 +52,6 @@ namespace QnSTranslator.Logic.Controllers.Business
             FirstEntityController.SessionToken = SessionToken;
             SecondEntityController.SessionToken = SessionToken;
         }
-
-        protected abstract GenericController<TFirst, TFirstEntity> CreateFirstEntityController(ControllerObject controller);
-        protected abstract GenericController<TSecond, TSecondEntity> CreateSecondEntityController(ControllerObject controller);
 
         protected E ConvertTo(I contract)
         {

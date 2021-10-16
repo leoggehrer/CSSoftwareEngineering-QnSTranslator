@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace QnSTranslator.Logic.Entities
 {
-	internal abstract partial class IdentityObject : Contracts.IIdentifiable
+    internal abstract partial class IdentityObject : Contracts.IIdentifiable
     {
 		private System.Int32 _id;
 		public virtual System.Int32 Id

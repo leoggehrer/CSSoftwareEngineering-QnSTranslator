@@ -8,19 +8,19 @@
 
 <tr>
     <td>
-        @Html.DisplayFor(modelItem => Model.FirstItem.Name)
+        @Html.DisplayFor(modelItem => Model.OneItem.Name)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => Model.FirstItem.Email)
+        @Html.DisplayFor(modelItem => Model.OneItem.Email)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => Model.FirstItem.EnableJwtAuth)
+        @Html.DisplayFor(modelItem => Model.OneItem.EnableJwtAuth)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => Model.FirstItem.AccessFailedCount)
+        @Html.DisplayFor(modelItem => Model.OneItem.AccessFailedCount)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => Model.FirstItem.State)
+        @Html.DisplayFor(modelItem => Model.OneItem.State)
     </td>
     <td>
         @Html.ActionLink(translateFor("Edit"), "Edit", new { id = Model.Id }) |

@@ -3,7 +3,7 @@
 
 namespace QnSTranslator.AspMvc.Modules.Session
 {
-    partial interface ISessionWrapper
+    internal partial interface ISessionWrapper
     {
         #region Translator
         string Translate(string text);

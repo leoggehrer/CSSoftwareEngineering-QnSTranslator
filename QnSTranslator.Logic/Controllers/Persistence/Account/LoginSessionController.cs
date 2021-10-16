@@ -6,7 +6,7 @@ using QnSTranslator.Logic.Entities.Persistence.Account;
 
 namespace QnSTranslator.Logic.Controllers.Persistence.Account
 {
-    partial class LoginSessionController
+    internal partial class LoginSessionController
     {
         protected override Task BeforeInsertingAsync(LoginSession entity)
         {

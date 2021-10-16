@@ -7,7 +7,7 @@ using CommonBase.Extensions;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class SolutionProperties
+    internal partial class SolutionProperties
     {
         public static string SolutionExtension => ".sln";
         public static string ProjectExtension => ".csproj";

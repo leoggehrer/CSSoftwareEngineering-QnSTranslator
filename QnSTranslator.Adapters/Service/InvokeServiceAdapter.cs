@@ -8,7 +8,7 @@ using QnSTranslator.Transfer.Persistence.Account;
 
 namespace QnSTranslator.Adapters.Service
 {
-    partial class InvokeServiceAdapter : ServiceAdapterObject
+    internal partial class InvokeServiceAdapter : ServiceAdapterObject
     {
         static InvokeServiceAdapter()
         {

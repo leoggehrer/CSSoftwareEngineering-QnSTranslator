@@ -69,7 +69,8 @@ namespace QnSTranslator.AspMvc.Modules.Language
             }
             EndLoadTranslations();
         }
-        static void LoadTranslations()
+
+        private static void LoadTranslations()
         {
             try
             {

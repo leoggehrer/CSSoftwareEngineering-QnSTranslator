@@ -8,9 +8,9 @@ using CSharpCodeGenerator.ConApp.Generation;
 
 namespace CSharpCodeGenerator.ConApp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             SolutionProperties solutionProperties = SolutionProperties.Create();
             EntityGenerator entityGenerator = EntityGenerator.Create(solutionProperties);
@@ -22,15 +22,15 @@ namespace CSharpCodeGenerator.ConApp
 
             List<string> lines = new List<string>();
 
-            Console.WriteLine("Create Modules-Entities...");
-            lines.Clear();
-            lines.AddRange(entityGenerator.CreateModulesEntities());
-            WriteAllLines(solutionProperties.EntitiesModulesFilePath, FormatCSharp(lines));
-
             Console.WriteLine("Create Business-Entities...");
             lines.Clear();
             lines.AddRange(entityGenerator.CreateBusinessEntities());
             WriteAllLines(solutionProperties.EntitiesBusinessFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Modules-Entities...");
+            lines.Clear();
+            lines.AddRange(entityGenerator.CreateModulesEntities());
+            WriteAllLines(solutionProperties.EntitiesModulesFilePath, FormatCSharp(lines));
 
             Console.WriteLine("Create Persistence-Entities...");
             lines.Clear();

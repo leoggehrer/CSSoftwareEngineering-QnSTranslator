@@ -40,14 +40,14 @@
     <input asp-for="Id" type="hidden" />
     <input asp-for="RowVersion" type="hidden" />
     <div style="margin-top: 1em;">
-        @await Html.PartialAsync("_IdentityEdit", Model.FirstItem)
+        @await Html.PartialAsync("_IdentityEdit", Model.OneItem)
     </div>
 
     @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
 
     <div style="margin-top: 1em;">
         <h4>Rolen</h4>
-        @await Html.PartialAsync("_RoleListEdit", Model.SecondItems)
+        @await Html.PartialAsync("_RoleListEdit", Model.ManyItems)
     </div>
 </form>
 @*Begin:Footer*@

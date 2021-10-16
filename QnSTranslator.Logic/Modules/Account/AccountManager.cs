@@ -52,14 +52,14 @@ namespace QnSTranslator.Logic.Modules.Account
             {
                 var appAccess = await appAccessCtrl.CreateAsync().ConfigureAwait(false);
 
-                appAccess.FirstItem.Name = name;
-                appAccess.FirstItem.Email = email;
-                appAccess.FirstItem.Password = password;
-                appAccess.FirstItem.EnableJwtAuth = enableJwtAuth;
-                var role = appAccess.CreateSecondItem();
+                appAccess.OneItem.Name = name;
+                appAccess.OneItem.Email = email;
+                appAccess.OneItem.Password = password;
+                appAccess.OneItem.EnableJwtAuth = enableJwtAuth;
+                var role = appAccess.CreateManyItem();
 
                 role.Designation = "SysAdmin";
-                appAccess.AddSecondItem(role);
+                appAccess.AddManyItem(role);
                 await appAccessCtrl.InsertAsync(appAccess).ConfigureAwait(false);
                 await appAccessCtrl.SaveChangesAsync().ConfigureAwait(false);
             }

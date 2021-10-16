@@ -8,8 +8,6 @@ using CommonBase.Extensions;
 using CommonBase.Helpers;
 using QnSTranslator.AspMvc.Models.Modules.Account;
 using QnSTranslator.AspMvc.Models.Persistence.Account;
-using Model = QnSTranslator.AspMvc.Models.Persistence.Account.LoginSession;
-using Contract = QnSTranslator.Contracts.Persistence.Account.ILoginSession;
 using AccountManager = QnSTranslator.Adapters.Modules.Account.AccountManager;
 
 namespace QnSTranslator.AspMvc.Controllers

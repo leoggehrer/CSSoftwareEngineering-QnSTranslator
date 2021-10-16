@@ -22,13 +22,17 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
 			Constructing();
 			Constructed();
 		}
-		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IIdentity, QnSTranslator.Logic.Entities.Persistence.Account.Identity> CreateFirstEntityController(ControllerObject controller)
+		private QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController oneEntityController = null;
+		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IIdentity, QnSTranslator.Logic.Entities.Persistence.Account.Identity> OneEntityController
 		{
-			return new QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController(controller);
+			get => oneEntityController ?? (oneEntityController = new QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController(this));
+			set => oneEntityController = value as QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController;
 		}
-		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IRole, QnSTranslator.Logic.Entities.Persistence.Account.Role> CreateSecondEntityController(ControllerObject controller)
+		private QnSTranslator.Logic.Controllers.Persistence.Account.RoleController manyEntityController = null;
+		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IRole, QnSTranslator.Logic.Entities.Persistence.Account.Role> ManyEntityController
 		{
-			return new QnSTranslator.Logic.Controllers.Persistence.Account.RoleController(controller);
+			get => manyEntityController ?? (manyEntityController = new QnSTranslator.Logic.Controllers.Persistence.Account.RoleController(this));
+			set => manyEntityController = value as QnSTranslator.Logic.Controllers.Persistence.Account.RoleController;
 		}
 	}
 }
@@ -55,13 +59,17 @@ namespace QnSTranslator.Logic.Controllers.Business.Account
 			Constructing();
 			Constructed();
 		}
-		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IIdentity, QnSTranslator.Logic.Entities.Persistence.Account.Identity> CreateFirstEntityController(ControllerObject controller)
+		private QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController firstEntityController = null;
+		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IIdentity, QnSTranslator.Logic.Entities.Persistence.Account.Identity> FirstEntityController
 		{
-			return new QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController(controller);
+			get => firstEntityController ?? (firstEntityController = new QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController(this));
+			set => firstEntityController = value as QnSTranslator.Logic.Controllers.Persistence.Account.IdentityController;
 		}
-		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IUser, QnSTranslator.Logic.Entities.Persistence.Account.User> CreateSecondEntityController(ControllerObject controller)
+		private QnSTranslator.Logic.Controllers.Persistence.Account.UserController secondEntityController = null;
+		protected override GenericController<QnSTranslator.Contracts.Persistence.Account.IUser, QnSTranslator.Logic.Entities.Persistence.Account.User> SecondEntityController
 		{
-			return new QnSTranslator.Logic.Controllers.Persistence.Account.UserController(controller);
+			get => secondEntityController ?? (secondEntityController = new QnSTranslator.Logic.Controllers.Persistence.Account.UserController(this));
+			set => secondEntityController = value as QnSTranslator.Logic.Controllers.Persistence.Account.UserController;
 		}
 	}
 }

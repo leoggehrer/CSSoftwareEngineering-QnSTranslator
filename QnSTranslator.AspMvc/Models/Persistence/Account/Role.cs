@@ -2,7 +2,7 @@
 //MdStart
 namespace QnSTranslator.AspMvc.Models.Persistence.Account
 {
-    partial class Role
+    public partial class Role
     {
         public bool Assigned{ get; set; }
     }

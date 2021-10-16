@@ -29,11 +29,11 @@ namespace QnSTranslator.Transfer.Business.Account
 			{
 				Id = other.Id;
 				RowVersion = other.RowVersion;
-				FirstItem.CopyProperties(other.FirstItem);
-				ClearSecondItems();
-				foreach (var item in other.SecondItems)
+				OneItem.CopyProperties(other.OneItem);
+				ClearManyItems();
+				foreach (var item in other.ManyItems)
 				{
-					AddSecondItem(item);
+					AddManyItem(item);
 				}
 			}
 			AfterCopyProperties(other);
